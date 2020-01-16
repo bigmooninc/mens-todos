@@ -8,41 +8,30 @@ const Todo = require("../../models/Todo");
 // @route   POST api/todos
 // @desc    Add a todo
 // @access  Private
-router.post(
-  "/",
-  [
-    auth,
-    [
-      check("text", "Text is required")
-        .not()
-        .isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { text } = req.body;
-
-    try {
-      const newTodo = new Todo({
-        text,
-        inProcess: false,
-        completed: false,
-        user: req.user.id
-      });
-
-      const todo = await newTodo.save();
-
-      res.json(todo);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server error");
-    }
+router.post("/", async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+
+  const { text } = req.body;
+
+  try {
+    const newTodo = new Todo({
+      text,
+      inProcess: false,
+      completed: false,
+      user: req.user.id
+    });
+
+    const todo = await newTodo.save();
+
+    res.json(todo);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 // @route   GET api/todos
 // @desc    Get all user's todos

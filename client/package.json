@@ -25,6 +25,5 @@
     "axios": "^0.19.1",
     "sirv-cli": "^0.4.4",
     "svelte-routing": "^1.4.0"
-  },
-  "proxy": "http://localhost:8888"
+  }
 }

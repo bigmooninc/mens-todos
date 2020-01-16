@@ -1,5 +1,8 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const cors = require("cors");
+// const proxy = require("http-proxy-middleware");
+// const path = require("path");
 
 const app = express();
 
@@ -7,7 +10,17 @@ const app = express();
 connectDB();
 
 // Init middleware
-app.use(express.json({ extended: false }));
+// app.use(
+//   "/api",
+//   proxy({
+//     target: "http://localhost:5000",
+//     changeOrigin: true
+//   })
+// );
+
+// app.use(express.static(path.join(__dirname, "public")));
+
+app.use(cors());
 
 app.get("/", (req, res) => res.send("API running..."));
 
