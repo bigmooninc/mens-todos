@@ -3,11 +3,11 @@
 
   // import { getTodos } from "./Todos.svelte";
 
-  let newTodo = "";
+  let text = "";
 
   async function handleSubmit() {
-    newTodo = newTodo.trim();
-    if (!newTodo) return;
+    text = text.trim();
+    if (!text) return;
 
     const res = await fetch("http://localhost:8888/api/todos", {
       method: "POST",
@@ -15,14 +15,14 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        text: newTodo
+        text
       })
     })
       .then(res => res.json())
       .then(data => console.log(data))
       .catch(err => console.log(err));
 
-    newTodo = "";
+    text = "";
   }
 </script>
 
@@ -31,5 +31,5 @@
 </style>
 
 <form on:submit|preventDefault={handleSubmit}>
-  <input bind:value={newTodo} type="text" placeholder="Add a todo" />
+  <input bind:value={text} type="text" placeholder="Add a todo" />
 </form>

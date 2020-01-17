@@ -85,7 +85,7 @@ router.put("/:id", auth, async (req, res) => {
 // @desc        Delete a todo
 // @access      Private
 
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     let todo = await Todo.findById(req.params.id);
     if (!todo) {
@@ -93,9 +93,9 @@ router.delete("/:id", auth, async (req, res) => {
     }
 
     // Make sure user owns todo
-    if (todo.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not authorized" });
-    }
+    // if (todo.user.toString() !== req.user.id) {
+    //   return res.status(401).json({ msg: "Not authorized" });
+    // }
 
     await Todo.findByIdAndRemove(req.params.id);
 
