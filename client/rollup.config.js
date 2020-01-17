@@ -19,12 +19,13 @@ export default {
     svelte({
       // enable run-time checks when not in production
       dev: !production,
-      preprocess: sveltePreprocess({ postcss: true }),
+
       // we'll extract any component CSS out into
       // a separate file — better for performance
       css: css => {
         css.write("public/build/bundle.css");
-      }
+      },
+      preprocess: sveltePreprocess({ postcss: true })
     }),
 
     // If you have external dependencies installed from

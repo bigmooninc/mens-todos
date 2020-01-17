@@ -2201,11 +2201,11 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
+    	child_ctx[6] = list[i];
     	return child_ctx;
     }
 
-    // (98:2) {:else}
+    // (118:2) {:else}
     function create_else_block(ctx) {
     	let p;
 
@@ -2213,7 +2213,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "There are no todos.";
-    			add_location(p, file, 98, 4, 2416);
+    			add_location(p, file, 118, 4, 3248);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -2230,14 +2230,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(98:2) {:else}",
+    		source: "(118:2) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (91:2) {#if todos}
+    // (111:2) {#if todos}
     function create_if_block(ctx) {
     	let each_1_anchor;
     	let current;
@@ -2269,7 +2269,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*handleRemove, todos*/ 9) {
+    			if (dirty & /*handleRemove, todos*/ 17) {
     				each_value = /*todos*/ ctx[0];
     				let i;
 
@@ -2324,18 +2324,18 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(91:2) {#if todos}",
+    		source: "(111:2) {#if todos}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (92:4) {#each todos as todo}
+    // (112:4) {#each todos as todo}
     function create_each_block(ctx) {
     	let div;
     	let p;
-    	let t0_value = /*todo*/ ctx[5].text + "";
+    	let t0_value = /*todo*/ ctx[6].text + "";
     	let t0;
     	let p_transition;
     	let t1;
@@ -2353,10 +2353,10 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Remove";
     			t3 = space();
-    			add_location(p, file, 93, 8, 2277);
-    			add_location(button, file, 94, 8, 2319);
+    			add_location(p, file, 113, 8, 3109);
+    			add_location(button, file, 114, 8, 3151);
     			attr_dev(div, "class", "w-full max-w-md mx-auto flex justify-between");
-    			add_location(div, file, 92, 6, 2210);
+    			add_location(div, file, 112, 6, 3042);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2371,7 +2371,7 @@ var app = (function () {
     				button,
     				"click",
     				function () {
-    					if (is_function(/*handleRemove*/ ctx[3](/*todo*/ ctx[5]._id))) /*handleRemove*/ ctx[3](/*todo*/ ctx[5]._id).apply(this, arguments);
+    					if (is_function(/*handleRemove*/ ctx[4](/*todo*/ ctx[6]._id))) /*handleRemove*/ ctx[4](/*todo*/ ctx[6]._id).apply(this, arguments);
     				},
     				false,
     				false,
@@ -2380,7 +2380,7 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if ((!current || dirty & /*todos*/ 1) && t0_value !== (t0_value = /*todo*/ ctx[5].text + "")) set_data_dev(t0, t0_value);
+    			if ((!current || dirty & /*todos*/ 1) && t0_value !== (t0_value = /*todo*/ ctx[6].text + "")) set_data_dev(t0, t0_value);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -2408,7 +2408,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(92:4) {#each todos as todo}",
+    		source: "(112:4) {#each todos as todo}",
     		ctx
     	});
 
@@ -2416,33 +2416,44 @@ var app = (function () {
     }
 
     function create_fragment$1(ctx) {
-    	let styles;
     	let t0;
     	let main;
     	let div8;
     	let div1;
     	let div0;
-    	let p0;
+    	let h30;
     	let t2;
-    	let div3;
-    	let div2;
-    	let p1;
+    	let button;
+    	let img;
+    	let img_src_value;
+    	let t3;
     	let t4;
-    	let div5;
-    	let div4;
-    	let p2;
+    	let div3;
+    	let h31;
     	let t6;
-    	let div7;
-    	let div6;
-    	let p3;
+    	let div2;
+    	let p0;
     	let t8;
+    	let div5;
+    	let h32;
+    	let t10;
+    	let div4;
+    	let p1;
+    	let t12;
+    	let div7;
+    	let h33;
+    	let t14;
+    	let div6;
+    	let p2;
+    	let t16;
     	let form;
-    	let input;
-    	let t9;
+    	let textarea;
+    	let t17;
     	let current_block_type_index;
     	let if_block;
     	let current;
     	let dispose;
+    	const tailwindcss = new Tailwindcss({ $$inline: true });
     	const if_block_creators = [create_if_block, create_else_block];
     	const if_blocks = [];
 
@@ -2456,102 +2467,137 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			styles = element("styles");
+    			create_component(tailwindcss.$$.fragment);
     			t0 = space();
     			main = element("main");
     			div8 = element("div");
     			div1 = element("div");
     			div0 = element("div");
+    			h30 = element("h3");
+    			h30.textContent = "Todo";
+    			t2 = space();
+    			button = element("button");
+    			img = element("img");
+    			t3 = text("\n          Add a card");
+    			t4 = space();
+    			div3 = element("div");
+    			h31 = element("h3");
+    			h31.textContent = "In Progress";
+    			t6 = space();
+    			div2 = element("div");
     			p0 = element("p");
     			p0.textContent = "Here is some text";
-    			t2 = space();
-    			div3 = element("div");
-    			div2 = element("div");
+    			t8 = space();
+    			div5 = element("div");
+    			h32 = element("h3");
+    			h32.textContent = "Pending Review";
+    			t10 = space();
+    			div4 = element("div");
     			p1 = element("p");
     			p1.textContent = "Here is some text";
-    			t4 = space();
-    			div5 = element("div");
-    			div4 = element("div");
+    			t12 = space();
+    			div7 = element("div");
+    			h33 = element("h3");
+    			h33.textContent = "Completed";
+    			t14 = space();
+    			div6 = element("div");
     			p2 = element("p");
     			p2.textContent = "Here is some text";
-    			t6 = space();
-    			div7 = element("div");
-    			div6 = element("div");
-    			p3 = element("p");
-    			p3.textContent = "Here is some text";
-    			t8 = space();
+    			t16 = space();
     			form = element("form");
-    			input = element("input");
-    			t9 = space();
+    			textarea = element("textarea");
+    			t17 = space();
     			if_block.c();
-    			add_location(styles, file, 60, 0, 1469);
-    			add_location(p0, file, 67, 8, 1611);
+    			attr_dev(h30, "class", "svelte-1oqipct");
+    			add_location(h30, file, 78, 8, 2195);
+    			if (img.src !== (img_src_value = /*src*/ ctx[2])) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "Add a card");
+    			attr_dev(img, "class", "w-6");
+    			add_location(img, file, 80, 10, 2299);
+    			attr_dev(button, "class", "flex justify-center items-center pr-2 py-2 bg-blue-800");
+    			add_location(button, file, 79, 8, 2217);
     			attr_dev(div0, "class", "bg-gray-200 p-4");
-    			add_location(div0, file, 66, 6, 1573);
+    			add_location(div0, file, 77, 6, 2157);
     			attr_dev(div1, "class", "w-1/4 mx-2");
-    			add_location(div1, file, 65, 4, 1542);
-    			add_location(p1, file, 72, 8, 1733);
+    			add_location(div1, file, 75, 4, 2125);
+    			attr_dev(h31, "class", "svelte-1oqipct");
+    			add_location(h31, file, 86, 6, 2440);
+    			add_location(p0, file, 88, 8, 2505);
     			attr_dev(div2, "class", "bg-gray-400 p-4");
-    			add_location(div2, file, 71, 6, 1695);
+    			add_location(div2, file, 87, 6, 2467);
     			attr_dev(div3, "class", "w-1/4 mx-2");
-    			add_location(div3, file, 70, 4, 1664);
-    			add_location(p2, file, 77, 8, 1855);
+    			add_location(div3, file, 85, 4, 2409);
+    			attr_dev(h32, "class", "svelte-1oqipct");
+    			add_location(h32, file, 92, 6, 2589);
+    			add_location(p1, file, 95, 8, 2658);
     			attr_dev(div4, "class", "bg-gray-600 p-4");
-    			add_location(div4, file, 76, 6, 1817);
+    			add_location(div4, file, 93, 6, 2619);
     			attr_dev(div5, "class", "w-1/4 mx-2");
-    			add_location(div5, file, 75, 4, 1786);
-    			add_location(p3, file, 82, 8, 1977);
+    			add_location(div5, file, 91, 4, 2558);
+    			attr_dev(h33, "class", "svelte-1oqipct");
+    			add_location(h33, file, 99, 6, 2742);
+    			add_location(p2, file, 102, 8, 2806);
     			attr_dev(div6, "class", "bg-gray-800 p-4");
-    			add_location(div6, file, 81, 6, 1939);
+    			add_location(div6, file, 100, 6, 2767);
     			attr_dev(div7, "class", "w-1/4 mx-2");
-    			add_location(div7, file, 80, 4, 1908);
+    			add_location(div7, file, 98, 4, 2711);
     			attr_dev(div8, "class", "container mx-auto flex flex-row ");
-    			add_location(div8, file, 64, 2, 1491);
-    			attr_dev(input, "type", "text");
-    			attr_dev(input, "placeholder", "Add a todo");
-    			add_location(input, file, 88, 4, 2089);
-    			add_location(form, file, 87, 2, 2038);
-    			add_location(main, file, 62, 0, 1481);
+    			add_location(div8, file, 74, 2, 2074);
+    			attr_dev(textarea, "type", "text");
+    			attr_dev(textarea, "placeholder", "Add a todo");
+    			add_location(textarea, file, 108, 4, 2918);
+    			add_location(form, file, 107, 2, 2867);
+    			add_location(main, file, 72, 0, 2064);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, styles, anchor);
+    			mount_component(tailwindcss, target, anchor);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, main, anchor);
     			append_dev(main, div8);
     			append_dev(div8, div1);
     			append_dev(div1, div0);
-    			append_dev(div0, p0);
-    			append_dev(div8, t2);
-    			append_dev(div8, div3);
-    			append_dev(div3, div2);
-    			append_dev(div2, p1);
+    			append_dev(div0, h30);
+    			append_dev(div0, t2);
+    			append_dev(div0, button);
+    			append_dev(button, img);
+    			append_dev(button, t3);
     			append_dev(div8, t4);
+    			append_dev(div8, div3);
+    			append_dev(div3, h31);
+    			append_dev(div3, t6);
+    			append_dev(div3, div2);
+    			append_dev(div2, p0);
+    			append_dev(div8, t8);
     			append_dev(div8, div5);
+    			append_dev(div5, h32);
+    			append_dev(div5, t10);
     			append_dev(div5, div4);
-    			append_dev(div4, p2);
-    			append_dev(div8, t6);
+    			append_dev(div4, p1);
+    			append_dev(div8, t12);
     			append_dev(div8, div7);
+    			append_dev(div7, h33);
+    			append_dev(div7, t14);
     			append_dev(div7, div6);
-    			append_dev(div6, p3);
-    			append_dev(main, t8);
+    			append_dev(div6, p2);
+    			append_dev(main, t16);
     			append_dev(main, form);
-    			append_dev(form, input);
-    			set_input_value(input, /*text*/ ctx[1]);
-    			append_dev(main, t9);
+    			append_dev(form, textarea);
+    			set_input_value(textarea, /*text*/ ctx[1]);
+    			append_dev(main, t17);
     			if_blocks[current_block_type_index].m(main, null);
     			current = true;
 
     			dispose = [
-    				listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
-    				listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[2]), false, true, false)
+    				listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[5]),
+    				listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[3]), false, true, false)
     			];
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*text*/ 2 && input.value !== /*text*/ ctx[1]) {
-    				set_input_value(input, /*text*/ ctx[1]);
+    			if (dirty & /*text*/ 2) {
+    				set_input_value(textarea, /*text*/ ctx[1]);
     			}
 
     			let previous_block_index = current_block_type_index;
@@ -2580,15 +2626,17 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
+    			transition_in(tailwindcss.$$.fragment, local);
     			transition_in(if_block);
     			current = true;
     		},
     		o: function outro(local) {
+    			transition_out(tailwindcss.$$.fragment, local);
     			transition_out(if_block);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(styles);
+    			destroy_component(tailwindcss, detaching);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(main);
     			if_blocks[current_block_type_index].d();
@@ -2608,6 +2656,7 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let src = "images/plus.svg";
     	let { todos = [] } = $$props;
     	let text = "";
 
@@ -2654,7 +2703,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<Todos> was created with unknown prop '${key}'`);
     	});
 
-    	function input_input_handler() {
+    	function textarea_input_handler() {
     		text = this.value;
     		$$invalidate(1, text);
     	}
@@ -2664,15 +2713,16 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => {
-    		return { todos, text };
+    		return { src, todos, text };
     	};
 
     	$$self.$inject_state = $$props => {
+    		if ("src" in $$props) $$invalidate(2, src = $$props.src);
     		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
     		if ("text" in $$props) $$invalidate(1, text = $$props.text);
     	};
 
-    	return [todos, text, handleSubmit, handleRemove, input_input_handler];
+    	return [todos, text, src, handleSubmit, handleRemove, textarea_input_handler];
     }
 
     class Todos extends SvelteComponentDev {
@@ -4743,8 +4793,8 @@ var app = (function () {
     			create_component(route1.$$.fragment);
     			t4 = space();
     			create_component(route2.$$.fragment);
-    			add_location(nav, file$4, 21, 2, 532);
-    			add_location(div, file$4, 26, 2, 670);
+    			add_location(nav, file$4, 21, 2, 531);
+    			add_location(div, file$4, 26, 2, 669);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, nav, anchor);

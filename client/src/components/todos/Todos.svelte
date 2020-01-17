@@ -1,8 +1,11 @@
 <script>
+  import Tailwindcss from "../../Tailwindcss.svelte";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import axios from "axios";
   // import TodoForm from "./TodoForm.svelte";
+
+  let src = "images/plus.svg";
 
   export let todos = [];
   let text = "";
@@ -58,35 +61,50 @@
   }
 </script>
 
-<styles />
+<style>
+  h3 {
+    @apply mb-4 ml-1 font-bold;
+  }
+</style>
 
+<Tailwindcss />
 <main>
 
   <div class="container mx-auto flex flex-row ">
     <div class="w-1/4 mx-2">
+
       <div class="bg-gray-200 p-4">
-        <p>Here is some text</p>
+        <h3>Todo</h3>
+        <button class="flex justify-center items-center pr-2 py-2 bg-blue-800">
+          <img {src} alt="Add a card" class="w-6" />
+          Add a card
+        </button>
       </div>
     </div>
     <div class="w-1/4 mx-2">
+      <h3>In Progress</h3>
       <div class="bg-gray-400 p-4">
         <p>Here is some text</p>
       </div>
     </div>
     <div class="w-1/4 mx-2">
+      <h3>Pending Review</h3>
       <div class="bg-gray-600 p-4">
+
         <p>Here is some text</p>
       </div>
     </div>
     <div class="w-1/4 mx-2">
+      <h3>Completed</h3>
       <div class="bg-gray-800 p-4">
+
         <p>Here is some text</p>
       </div>
     </div>
   </div>
 
   <form on:submit|preventDefault={handleSubmit}>
-    <input bind:value={text} type="text" placeholder="Add a todo" />
+    <textarea bind:value={text} type="text" placeholder="Add a todo" />
   </form>
   {#if todos}
     {#each todos as todo}
