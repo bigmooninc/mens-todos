@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import TodoForm from "./TodoForm.svelte";
-  import axios from "axios";
 
   let todos = [];
 

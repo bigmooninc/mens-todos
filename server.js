@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 // const proxy = require("http-proxy-middleware");
 // const path = require("path");
 
@@ -21,6 +22,8 @@ connectDB();
 // app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
+
+app.use(require("body-parser").json());
 
 app.get("/", (req, res) => res.send("API running..."));
 

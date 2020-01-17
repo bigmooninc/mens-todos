@@ -20,8 +20,8 @@ router.post("/", async (req, res) => {
     const newTodo = new Todo({
       text,
       inProcess: false,
-      completed: false,
-      user: req.user.id
+      completed: false
+      // user: req.user.id
     });
 
     const todo = await newTodo.save();
