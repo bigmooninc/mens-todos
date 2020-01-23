@@ -10,10 +10,13 @@ const TodoSchema = new Schema({
     type: String,
     required: true
   },
-  completed: {
+  pinned: {
     type: Boolean
   },
-  inProcess: {
+  archived: {
+    type: Boolean
+  },
+  loading: {
     type: Boolean
   },
   date: {

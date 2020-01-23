@@ -1,5 +1,8 @@
 module.exports = {
   theme: {
+    fontFamily: {
+      sans: ["Nanum Gothic", "sans-serif"]
+    },
     transitionProperty: {
       // defaults to these values
       none: "none",

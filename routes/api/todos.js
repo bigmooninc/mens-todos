@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-const User = require("../../models/User");
 const Todo = require("../../models/Todo");
 
 // @route   POST api/todos
@@ -19,9 +17,8 @@ router.post("/", async (req, res) => {
   try {
     const newTodo = new Todo({
       text,
-      inProcess: false,
-      completed: false
-      // user: req.user.id
+      pinned: false,
+      archived: false
     });
 
     const todo = await newTodo.save();
@@ -49,14 +46,14 @@ router.get("/", async (req, res) => {
 // @route   PUT api/todos
 // @desc    Update a todo
 // @access  Private
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { text, completed, inProcess } = req.body;
 
   // Build contact object
   const todoFields = {};
   if (text) todoFields.text = text;
-  if (completed) todoFields.completed = completed;
-  if (inProcess) todoFields.inProcess = inProcess;
+  if (archived) todoFields.archived = archived;
+  if (pinned) todoFields.pinned = pinned;
 
   try {
     let todo = await Todo.findById(req.params.id);
