@@ -250,6 +250,20 @@ var app = (function () {
     function onMount(fn) {
         get_current_component().$$.on_mount.push(fn);
     }
+    function createEventDispatcher() {
+        const component = get_current_component();
+        return (type, detail) => {
+            const callbacks = component.$$.callbacks[type];
+            if (callbacks) {
+                // TODO are there situations where events could be dispatched
+                // in a server (non-DOM) environment?
+                const event = custom_event(type, detail);
+                callbacks.slice().forEach(fn => {
+                    fn.call(component, event);
+                });
+            }
+        };
+    }
 
     const dirty_components = [];
     const binding_callbacks = [];
@@ -265,9 +279,6 @@ var app = (function () {
     }
     function add_render_callback(fn) {
         render_callbacks.push(fn);
-    }
-    function add_flush_callback(fn) {
-        flush_callbacks.push(fn);
     }
     function flush() {
         const seen_callbacks = new Set();
@@ -309,8 +320,35 @@ var app = (function () {
             $$.after_update.forEach(add_render_callback);
         }
     }
+
+    let promise;
+    function wait() {
+        if (!promise) {
+            promise = Promise.resolve();
+            promise.then(() => {
+                promise = null;
+            });
+        }
+        return promise;
+    }
+    function dispatch(node, direction, kind) {
+        node.dispatchEvent(custom_event(`${direction ? 'intro' : 'outro'}${kind}`));
+    }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -333,16 +371,120 @@ var app = (function () {
             block.o(local);
         }
     }
-
-    const globals = (typeof window !== 'undefined' ? window : global);
-
-    function destroy_block(block, lookup) {
-        block.d(1);
-        lookup.delete(block.key);
+    const null_transition = { duration: 0 };
+    function create_bidirectional_transition(node, fn, params, intro) {
+        let config = fn(node, params);
+        let t = intro ? 0 : 1;
+        let running_program = null;
+        let pending_program = null;
+        let animation_name = null;
+        function clear_animation() {
+            if (animation_name)
+                delete_rule(node, animation_name);
+        }
+        function init(program, duration) {
+            const d = program.b - t;
+            duration *= Math.abs(d);
+            return {
+                a: t,
+                b: program.b,
+                d,
+                duration,
+                start: program.start,
+                end: program.start + duration,
+                group: program.group
+            };
+        }
+        function go(b) {
+            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+            const program = {
+                start: now() + delay,
+                b
+            };
+            if (!b) {
+                // @ts-ignore todo: improve typings
+                program.group = outros;
+                outros.r += 1;
+            }
+            if (running_program) {
+                pending_program = program;
+            }
+            else {
+                // if this is an intro, and there's a delay, we need to do
+                // an initial tick and/or apply CSS animation immediately
+                if (css) {
+                    clear_animation();
+                    animation_name = create_rule(node, t, b, duration, delay, easing, css);
+                }
+                if (b)
+                    tick(0, 1);
+                running_program = init(program, duration);
+                add_render_callback(() => dispatch(node, b, 'start'));
+                loop(now => {
+                    if (pending_program && now > pending_program.start) {
+                        running_program = init(pending_program, duration);
+                        pending_program = null;
+                        dispatch(node, running_program.b, 'start');
+                        if (css) {
+                            clear_animation();
+                            animation_name = create_rule(node, t, running_program.b, running_program.duration, 0, easing, config.css);
+                        }
+                    }
+                    if (running_program) {
+                        if (now >= running_program.end) {
+                            tick(t = running_program.b, 1 - t);
+                            dispatch(node, running_program.b, 'end');
+                            if (!pending_program) {
+                                // we're done
+                                if (running_program.b) {
+                                    // intro — we can tidy up immediately
+                                    clear_animation();
+                                }
+                                else {
+                                    // outro — needs to be coordinated
+                                    if (!--running_program.group.r)
+                                        run_all(running_program.group.c);
+                                }
+                            }
+                            running_program = null;
+                        }
+                        else if (now >= running_program.start) {
+                            const p = now - running_program.start;
+                            t = running_program.a + running_program.d * easing(p / running_program.duration);
+                            tick(t, 1 - t);
+                        }
+                    }
+                    return !!(running_program || pending_program);
+                });
+            }
+        }
+        return {
+            run(b) {
+                if (is_function(config)) {
+                    wait().then(() => {
+                        // @ts-ignore
+                        config = config();
+                        go(b);
+                    });
+                }
+                else {
+                    go(b);
+                }
+            },
+            end() {
+                clear_animation();
+                running_program = pending_program = null;
+            }
+        };
     }
-    function fix_and_destroy_block(block, lookup) {
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function fix_and_outro_and_destroy_block(block, lookup) {
         block.f();
-        destroy_block(block, lookup);
+        outro_and_destroy_block(block, lookup);
     }
     function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
         let o = old_blocks.length;
@@ -418,14 +560,6 @@ var app = (function () {
         while (n)
             insert(new_blocks[n - 1]);
         return new_blocks;
-    }
-
-    function bind(component, name, callback) {
-        const index = component.$$.props[name];
-        if (index !== undefined) {
-            component.$$.bound[index] = callback;
-            callback(component.$$.ctx[index]);
-        }
     }
     function create_component(block) {
         block && block.c();
@@ -604,9 +738,17 @@ var app = (function () {
         return f * f * f + 1.0;
     }
 
-    /* src/components/todos/TodoForm.svelte generated by Svelte v3.17.1 */
+    function fade(node, { delay = 0, duration = 400, easing = identity }) {
+        const o = +getComputedStyle(node).opacity;
+        return {
+            delay,
+            duration,
+            easing,
+            css: t => `opacity: ${t * o}`
+        };
+    }
 
-    const { console: console_1 } = globals;
+    /* src/components/todos/TodoForm.svelte generated by Svelte v3.17.1 */
     const file = "src/components/todos/TodoForm.svelte";
 
     function create_fragment(ctx) {
@@ -623,17 +765,17 @@ var app = (function () {
     			input = element("input");
     			attr_dev(input, "type", "text");
 
-    			attr_dev(input, "placeholder", input_placeholder_value = /*todos*/ ctx[1].length > 0
+    			attr_dev(input, "placeholder", input_placeholder_value = /*todos*/ ctx[0].length > 0
     			? "Add another todo"
     			: "Add a todo");
 
     			attr_dev(input, "class", "w-full py-2 px-3 text-md font-sans font-normal bg-transparent\n      border-transparent shadow-none outline-none text-white text-lg");
-    			add_location(input, file, 46, 4, 1236);
+    			add_location(input, file, 27, 4, 816);
     			attr_dev(form, "class", "mb-3");
     			attr_dev(form, "id", "todo-input");
-    			add_location(form, file, 45, 2, 1156);
+    			add_location(form, file, 26, 2, 745);
     			attr_dev(div, "class", "input-todo svelte-10ghh8j");
-    			add_location(div, file, 44, 0, 1129);
+    			add_location(div, file, 25, 0, 718);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -642,30 +784,30 @@ var app = (function () {
     			insert_dev(target, div, anchor);
     			append_dev(div, form);
     			append_dev(form, input);
-    			/*input_binding*/ ctx[4](input);
-    			set_input_value(input, /*text*/ ctx[0]);
+    			/*input_binding*/ ctx[5](input);
+    			set_input_value(input, /*text*/ ctx[1]);
 
     			dispose = [
-    				listen_dev(input, "input", /*input_input_handler*/ ctx[5]),
-    				listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[3]), false, true, false)
+    				listen_dev(input, "input", /*input_input_handler*/ ctx[6]),
+    				listen_dev(form, "submit", prevent_default(/*add*/ ctx[3]), false, true, false)
     			];
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*todos*/ 2 && input_placeholder_value !== (input_placeholder_value = /*todos*/ ctx[1].length > 0
+    			if (dirty & /*todos*/ 1 && input_placeholder_value !== (input_placeholder_value = /*todos*/ ctx[0].length > 0
     			? "Add another todo"
     			: "Add a todo")) {
     				attr_dev(input, "placeholder", input_placeholder_value);
     			}
 
-    			if (dirty & /*text*/ 1 && input.value !== /*text*/ ctx[0]) {
-    				set_input_value(input, /*text*/ ctx[0]);
+    			if (dirty & /*text*/ 2 && input.value !== /*text*/ ctx[1]) {
+    				set_input_value(input, /*text*/ ctx[1]);
     			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*input_binding*/ ctx[4](null);
+    			/*input_binding*/ ctx[5](null);
     			run_all(dispose);
     		}
     	};
@@ -682,31 +824,21 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
-    	let { text = "" } = $$props;
-    	let { todos } = $$props;
+    	let { todos = [] } = $$props;
+    	let text;
     	let todoInput;
     	onMount(() => todoInput.focus());
+    	const dispatch = createEventDispatcher();
 
-    	async function handleSubmit() {
-    		$$invalidate(0, text = text.trim());
-    		if (!text) return;
+    	const add = () => {
+    		dispatch("add", { text });
+    		$$invalidate(1, text = "");
+    	};
 
-    		const res = await fetch("http://localhost:8888/api/todos", {
-    			method: "POST",
-    			headers: { "Content-Type": "application/json" },
-    			body: JSON.stringify({ text })
-    		}).then(res => res.json()).then(data => console.log(data)).catch(err => console.log(err));
-
-    		let newTodos = await fetch("http://localhost:8888/api/todos");
-    		$$invalidate(1, todos = await newTodos.json());
-    		$$invalidate(0, text = "");
-    		todoInput.focus();
-    	}
-
-    	const writable_props = ["text", "todos"];
+    	const writable_props = ["todos"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<TodoForm> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<TodoForm> was created with unknown prop '${key}'`);
     	});
 
     	function input_binding($$value) {
@@ -717,31 +849,30 @@ var app = (function () {
 
     	function input_input_handler() {
     		text = this.value;
-    		$$invalidate(0, text);
+    		$$invalidate(1, text);
     	}
 
     	$$self.$set = $$props => {
-    		if ("text" in $$props) $$invalidate(0, text = $$props.text);
-    		if ("todos" in $$props) $$invalidate(1, todos = $$props.todos);
+    		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
     	};
 
     	$$self.$capture_state = () => {
-    		return { text, todos, todoInput };
+    		return { todos, text, todoInput };
     	};
 
     	$$self.$inject_state = $$props => {
-    		if ("text" in $$props) $$invalidate(0, text = $$props.text);
-    		if ("todos" in $$props) $$invalidate(1, todos = $$props.todos);
+    		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
+    		if ("text" in $$props) $$invalidate(1, text = $$props.text);
     		if ("todoInput" in $$props) $$invalidate(2, todoInput = $$props.todoInput);
     	};
 
-    	return [text, todos, todoInput, handleSubmit, input_binding, input_input_handler];
+    	return [todos, text, todoInput, add, dispatch, input_binding, input_input_handler];
     }
 
     class TodoForm extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance, create_fragment, safe_not_equal, { text: 0, todos: 1 });
+    		init(this, options, instance, create_fragment, safe_not_equal, { todos: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -749,21 +880,6 @@ var app = (function () {
     			options,
     			id: create_fragment.name
     		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || ({});
-
-    		if (/*todos*/ ctx[1] === undefined && !("todos" in props)) {
-    			console_1.warn("<TodoForm> was created without expected prop 'todos'");
-    		}
-    	}
-
-    	get text() {
-    		throw new Error("<TodoForm>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set text(value) {
-    		throw new Error("<TodoForm>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get todos() {
@@ -793,17 +909,15 @@ var app = (function () {
     }
 
     /* src/components/todos/TodoList.svelte generated by Svelte v3.17.1 */
-
-    const { console: console_1$1 } = globals;
     const file$1 = "src/components/todos/TodoList.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[4] = list[i];
+    	child_ctx[1] = list[i];
     	return child_ctx;
     }
 
-    // (36:0) {#if loading}
+    // (40:0) {#if loading}
     function create_if_block_2(ctx) {
     	let div;
     	let p;
@@ -813,9 +927,9 @@ var app = (function () {
     			div = element("div");
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file$1, 37, 4, 1200);
+    			add_location(p, file$1, 41, 4, 1150);
     			attr_dev(div, "class", "h-32 flex justify-center items-center");
-    			add_location(div, file$1, 36, 2, 1144);
+    			add_location(div, file$1, 40, 2, 1094);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -830,14 +944,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(36:0) {#if loading}",
+    		source: "(40:0) {#if loading}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:0) {#if emptyTodos}
+    // (45:0) {#if emptyTodos}
     function create_if_block_1(ctx) {
     	let div;
     	let p;
@@ -848,9 +962,9 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "There are no todos. Create one!";
     			attr_dev(p, "class", "text-white opacity-75 font-sans font-normal text-xl");
-    			add_location(p, file$1, 42, 4, 1308);
+    			add_location(p, file$1, 46, 4, 1258);
     			attr_dev(div, "class", "h-32 flex justify-center items-center");
-    			add_location(div, file$1, 41, 2, 1252);
+    			add_location(div, file$1, 45, 2, 1202);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -865,17 +979,17 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(41:0) {#if emptyTodos}",
+    		source: "(45:0) {#if emptyTodos}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:6) {:else}
+    // (61:6) {:else}
     function create_else_block(ctx) {
     	let p;
-    	let t_value = /*todo*/ ctx[4].text + "";
+    	let t_value = /*todo*/ ctx[1].text + "";
     	let t;
 
     	const block = {
@@ -883,14 +997,14 @@ var app = (function () {
     			p = element("p");
     			t = text(t_value);
     			attr_dev(p, "class", "font-sans font-normal text-md p-3 text-white z-10");
-    			add_location(p, file$1, 57, 8, 1791);
+    			add_location(p, file$1, 61, 8, 1750);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
     			append_dev(p, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*todosInOrder*/ 4 && t_value !== (t_value = /*todo*/ ctx[4].text + "")) set_data_dev(t, t_value);
+    			if (dirty & /*todosInOrder*/ 8 && t_value !== (t_value = /*todo*/ ctx[1].text + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
@@ -901,17 +1015,17 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(57:6) {:else}",
+    		source: "(61:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (53:6) {#if todo.status === 'TODO_ARCHIVED'}
+    // (57:6) {#if todo.status === 'TODO_ARCHIVED'}
     function create_if_block(ctx) {
     	let p;
-    	let t_value = /*todo*/ ctx[4].text + "";
+    	let t_value = /*todo*/ ctx[1].text + "";
     	let t;
 
     	const block = {
@@ -919,14 +1033,14 @@ var app = (function () {
     			p = element("p");
     			t = text(t_value);
     			attr_dev(p, "class", "font-sans font-normal text-md p-3 text-white z-10");
-    			add_location(p, file$1, 53, 8, 1672);
+    			add_location(p, file$1, 57, 8, 1631);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
     			append_dev(p, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*todosInOrder*/ 4 && t_value !== (t_value = /*todo*/ ctx[4].text + "")) set_data_dev(t, t_value);
+    			if (dirty & /*todosInOrder*/ 8 && t_value !== (t_value = /*todo*/ ctx[1].text + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
@@ -937,29 +1051,41 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(53:6) {#if todo.status === 'TODO_ARCHIVED'}",
+    		source: "(57:6) {#if todo.status === 'TODO_ARCHIVED'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (48:0) {#each todosInOrder as todo (todo._id)}
+    // (52:0) {#each todosInOrder as todo (todo._id)}
     function create_each_block(key_1, ctx) {
-    	let div2;
+    	let div3;
     	let div0;
     	let t0;
     	let div1;
     	let a;
-    	let img;
-    	let img_src_value;
+    	let img0;
+    	let img0_src_value;
     	let t1;
+    	let div2;
+    	let img1;
+    	let img1_src_value;
+    	let t2;
+    	let img2;
+    	let img2_src_value;
+    	let t3;
+    	let img3;
+    	let img3_src_value;
+    	let div2_transition;
+    	let t4;
     	let rect;
     	let stop_animation = noop;
+    	let current;
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*todo*/ ctx[4].status === "TODO_ARCHIVED") return create_if_block;
+    		if (/*todo*/ ctx[1].status === "TODO_ARCHIVED") return create_if_block;
     		return create_else_block;
     	}
 
@@ -970,43 +1096,73 @@ var app = (function () {
     		key: key_1,
     		first: null,
     		c: function create() {
-    			div2 = element("div");
+    			div3 = element("div");
     			div0 = element("div");
     			if_block.c();
     			t0 = space();
     			div1 = element("div");
     			a = element("a");
-    			img = element("img");
+    			img0 = element("img");
     			t1 = space();
+    			div2 = element("div");
+    			img1 = element("img");
+    			t2 = space();
+    			img2 = element("img");
+    			t3 = space();
+    			img3 = element("img");
+    			t4 = space();
     			attr_dev(div0, "class", "flex-1");
-    			add_location(div0, file$1, 51, 4, 1599);
-    			if (img.src !== (img_src_value = verticalDots)) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "alt", "Remove todo");
-    			attr_dev(img, "class", "h-6");
-    			add_location(img, file$1, 64, 8, 2026);
+    			add_location(div0, file$1, 55, 4, 1558);
+    			if (img0.src !== (img0_src_value = verticalDots)) attr_dev(img0, "src", img0_src_value);
+    			attr_dev(img0, "alt", "Remove todo");
+    			attr_dev(img0, "class", "h-6");
+    			add_location(img0, file$1, 72, 8, 2048);
     			attr_dev(a, "href", "/");
-    			add_location(a, file$1, 63, 6, 1960);
-    			attr_dev(div1, "class", "w-10 flex justify-center");
-    			add_location(div1, file$1, 62, 4, 1915);
-    			attr_dev(div2, "class", "w-full flex items-center bg-black mb-1 relative z-0");
-    			add_location(div2, file$1, 48, 2, 1476);
-    			this.first = div2;
+    			attr_dev(a, "class", "w-full flex justify-center");
+    			add_location(a, file$1, 68, 6, 1929);
+    			attr_dev(div1, "class", "w-10 flex justify-center relative");
+    			add_location(div1, file$1, 67, 4, 1875);
+    			if (img1.src !== (img1_src_value = pinTodoImage)) attr_dev(img1, "src", img1_src_value);
+    			attr_dev(img1, "alt", "Pin todo");
+    			attr_dev(img1, "class", "mx-2");
+    			add_location(img1, file$1, 81, 6, 2344);
+    			if (img2.src !== (img2_src_value = archiveTodoImage)) attr_dev(img2, "src", img2_src_value);
+    			attr_dev(img2, "alt", "Archive todo");
+    			attr_dev(img2, "class", "mx-2");
+    			add_location(img2, file$1, 82, 6, 2405);
+    			if (img3.src !== (img3_src_value = deleteTodoImage)) attr_dev(img3, "src", img3_src_value);
+    			attr_dev(img3, "alt", "Delete todo");
+    			attr_dev(img3, "class", "mx-2");
+    			add_location(img3, file$1, 83, 6, 2474);
+    			attr_dev(div2, "class", "absolute flex flex-row right-0 hidden");
+    			add_location(div2, file$1, 80, 4, 2270);
+    			attr_dev(div3, "class", "relative w-full flex items-center bg-black mb-1 relative z-0");
+    			add_location(div3, file$1, 52, 2, 1426);
+    			this.first = div3;
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div2, anchor);
-    			append_dev(div2, div0);
+    			insert_dev(target, div3, anchor);
+    			append_dev(div3, div0);
     			if_block.m(div0, null);
-    			append_dev(div2, t0);
-    			append_dev(div2, div1);
+    			append_dev(div3, t0);
+    			append_dev(div3, div1);
     			append_dev(div1, a);
-    			append_dev(a, img);
-    			append_dev(div2, t1);
+    			append_dev(a, img0);
+    			append_dev(div3, t1);
+    			append_dev(div3, div2);
+    			append_dev(div2, img1);
+    			append_dev(div2, t2);
+    			append_dev(div2, img2);
+    			append_dev(div2, t3);
+    			append_dev(div2, img3);
+    			append_dev(div3, t4);
+    			current = true;
 
     			dispose = listen_dev(
     				a,
     				"click",
     				prevent_default(function () {
-    					if (is_function(/*handleRemove*/ ctx[3](/*todo*/ ctx[4]))) /*handleRemove*/ ctx[3](/*todo*/ ctx[4]).apply(this, arguments);
+    					if (is_function(/*remove*/ ctx[4](/*todo*/ ctx[1]))) /*remove*/ ctx[4](/*todo*/ ctx[1]).apply(this, arguments);
     				}),
     				false,
     				true,
@@ -1029,19 +1185,35 @@ var app = (function () {
     			}
     		},
     		r: function measure() {
-    			rect = div2.getBoundingClientRect();
+    			rect = div3.getBoundingClientRect();
     		},
     		f: function fix() {
-    			fix_position(div2);
+    			fix_position(div3);
     			stop_animation();
     		},
     		a: function animate() {
     			stop_animation();
-    			stop_animation = create_animation(div2, rect, flip, { delay: 150, duration: 200 });
+    			stop_animation = create_animation(div3, rect, flip, { delay: 150, duration: 400 });
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, true);
+    				div2_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, false);
+    			div2_transition.run(0);
+    			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div2);
+    			if (detaching) detach_dev(div3);
     			if_block.d();
+    			if (detaching && div2_transition) div2_transition.end();
     			dispose();
     		}
     	};
@@ -1050,7 +1222,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(48:0) {#each todosInOrder as todo (todo._id)}",
+    		source: "(52:0) {#each todosInOrder as todo (todo._id)}",
     		ctx
     	});
 
@@ -1063,10 +1235,11 @@ var app = (function () {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
+    	let current;
     	let if_block0 = /*loading*/ ctx[0] && create_if_block_2(ctx);
-    	let if_block1 = /*emptyTodos*/ ctx[1] && create_if_block_1(ctx);
-    	let each_value = /*todosInOrder*/ ctx[2];
-    	const get_key = ctx => /*todo*/ ctx[4]._id;
+    	let if_block1 = /*emptyTodos*/ ctx[2] && create_if_block_1(ctx);
+    	let each_value = /*todosInOrder*/ ctx[3];
+    	const get_key = ctx => /*todo*/ ctx[1]._id;
 
     	for (let i = 0; i < each_value.length; i += 1) {
     		let child_ctx = get_each_context(ctx, each_value, i);
@@ -1101,6 +1274,7 @@ var app = (function () {
     			}
 
     			insert_dev(target, each_1_anchor, anchor);
+    			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			if (/*loading*/ ctx[0]) {
@@ -1114,7 +1288,7 @@ var app = (function () {
     				if_block0 = null;
     			}
 
-    			if (/*emptyTodos*/ ctx[1]) {
+    			if (/*emptyTodos*/ ctx[2]) {
     				if (!if_block1) {
     					if_block1 = create_if_block_1(ctx);
     					if_block1.c();
@@ -1125,13 +1299,29 @@ var app = (function () {
     				if_block1 = null;
     			}
 
-    			const each_value = /*todosInOrder*/ ctx[2];
+    			const each_value = /*todosInOrder*/ ctx[3];
+    			group_outros();
     			for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].r();
-    			each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, fix_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
+    			each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, fix_and_outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
     			for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].a();
+    			check_outros();
     		},
-    		i: noop,
-    		o: noop,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (if_block0) if_block0.d(detaching);
     			if (detaching) detach_dev(t0);
@@ -1157,31 +1347,30 @@ var app = (function () {
     	return block;
     }
     const verticalDots = "images/vertical-dots.svg";
+    const pinTodoImage = "images/clip-red-400.svg";
+    const archiveTodoImage = "images/archive-red-400.svg";
+    const deleteTodoImage = "images/trash-red-400.svg";
 
     function instance$1($$self, $$props, $$invalidate) {
     	let { loading = false } = $$props;
     	let { todos = [] } = $$props;
-    	let todo;
+    	let { todo } = $$props;
+    	const dispatch = createEventDispatcher();
 
-    	const handleRemove = async todo => {
-    		const res = await fetch(`http://localhost:8888/api/todos/${todo._id}`, {
-    			method: "DELETE",
-    			headers: { "Content-Type": "application/json" }
-    		}).then(res => console.log(res));
-
-    		let newTodos = await fetch("http://localhost:8888/api/todos");
-    		$$invalidate(5, todos = await newTodos.json());
+    	const remove = todo => {
+    		dispatch("remove", { id: todo._id });
     	};
 
-    	const writable_props = ["loading", "todos"];
+    	const writable_props = ["loading", "todos", "todo"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<TodoList> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<TodoList> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$set = $$props => {
     		if ("loading" in $$props) $$invalidate(0, loading = $$props.loading);
     		if ("todos" in $$props) $$invalidate(5, todos = $$props.todos);
+    		if ("todo" in $$props) $$invalidate(1, todo = $$props.todo);
     	};
 
     	$$self.$capture_state = () => {
@@ -1198,10 +1387,10 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ("loading" in $$props) $$invalidate(0, loading = $$props.loading);
     		if ("todos" in $$props) $$invalidate(5, todos = $$props.todos);
-    		if ("todo" in $$props) $$invalidate(4, todo = $$props.todo);
+    		if ("todo" in $$props) $$invalidate(1, todo = $$props.todo);
     		if ("noTodos" in $$props) noTodos = $$props.noTodos;
-    		if ("emptyTodos" in $$props) $$invalidate(1, emptyTodos = $$props.emptyTodos);
-    		if ("todosInOrder" in $$props) $$invalidate(2, todosInOrder = $$props.todosInOrder);
+    		if ("emptyTodos" in $$props) $$invalidate(2, emptyTodos = $$props.emptyTodos);
+    		if ("todosInOrder" in $$props) $$invalidate(3, todosInOrder = $$props.todosInOrder);
     	};
 
     	let noTodos;
@@ -1214,24 +1403,24 @@ var app = (function () {
     		}
 
     		if ($$self.$$.dirty & /*todos, loading*/ 33) {
-    			 $$invalidate(1, emptyTodos = todos.length === 0 && !loading);
+    			 $$invalidate(2, emptyTodos = todos.length === 0 && !loading);
     		}
 
     		if ($$self.$$.dirty & /*todos*/ 32) {
-    			 $$invalidate(2, todosInOrder = [
+    			 $$invalidate(3, todosInOrder = [
     				...todos.filter(t => t.state === "TODO_PINNED"),
     				...todos.filter(t => t.state !== "TODO_PINNED")
     			]);
     		}
     	};
 
-    	return [loading, emptyTodos, todosInOrder, handleRemove, todo, todos];
+    	return [loading, todo, emptyTodos, todosInOrder, remove, todos];
     }
 
     class TodoList extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { loading: 0, todos: 5 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { loading: 0, todos: 5, todo: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1239,6 +1428,13 @@ var app = (function () {
     			options,
     			id: create_fragment$1.name
     		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || ({});
+
+    		if (/*todo*/ ctx[1] === undefined && !("todo" in props)) {
+    			console.warn("<TodoList> was created without expected prop 'todo'");
+    		}
     	}
 
     	get loading() {
@@ -1256,6 +1452,14 @@ var app = (function () {
     	set todos(value) {
     		throw new Error("<TodoList>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get todo() {
+    		throw new Error("<TodoList>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set todo(value) {
+    		throw new Error("<TodoList>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/components/todos/Todos.svelte generated by Svelte v3.17.1 */
@@ -1265,46 +1469,25 @@ var app = (function () {
     	let main;
     	let h1;
     	let t1;
-    	let updating_text;
-    	let updating_todos;
     	let t2;
-    	let updating_todo;
     	let current;
 
-    	function todoform_text_binding(value) {
-    		/*todoform_text_binding*/ ctx[3].call(null, value);
-    	}
+    	const todoform = new TodoForm({
+    			props: { todos: /*todos*/ ctx[0] },
+    			$$inline: true
+    		});
 
-    	function todoform_todos_binding(value_1) {
-    		/*todoform_todos_binding*/ ctx[4].call(null, value_1);
-    	}
+    	todoform.$on("add", /*handleSubmit*/ ctx[2]);
 
-    	let todoform_props = {};
+    	const todolist = new TodoList({
+    			props: {
+    				todos: /*todos*/ ctx[0],
+    				todo: /*todo*/ ctx[1]
+    			},
+    			$$inline: true
+    		});
 
-    	if (/*text*/ ctx[2] !== void 0) {
-    		todoform_props.text = /*text*/ ctx[2];
-    	}
-
-    	if (/*todos*/ ctx[0] !== void 0) {
-    		todoform_props.todos = /*todos*/ ctx[0];
-    	}
-
-    	const todoform = new TodoForm({ props: todoform_props, $$inline: true });
-    	binding_callbacks.push(() => bind(todoform, "text", todoform_text_binding));
-    	binding_callbacks.push(() => bind(todoform, "todos", todoform_todos_binding));
-
-    	function todolist_todo_binding(value_2) {
-    		/*todolist_todo_binding*/ ctx[5].call(null, value_2);
-    	}
-
-    	let todolist_props = { todos: /*todos*/ ctx[0] };
-
-    	if (/*todo*/ ctx[1] !== void 0) {
-    		todolist_props.todo = /*todo*/ ctx[1];
-    	}
-
-    	const todolist = new TodoList({ props: todolist_props, $$inline: true });
-    	binding_callbacks.push(() => bind(todolist, "todo", todolist_todo_binding));
+    	todolist.$on("remove", /*handleRemove*/ ctx[3]);
 
     	const block = {
     		c: function create() {
@@ -1316,9 +1499,9 @@ var app = (function () {
     			t2 = space();
     			create_component(todolist.$$.fragment);
     			attr_dev(h1, "class", "text-center text-white mb-4 text-3xl font-sans font-extrabold");
-    			add_location(h1, file$2, 46, 2, 1389);
+    			add_location(h1, file$2, 66, 2, 1980);
     			attr_dev(main, "class", "w-full max-w-xl mx-auto mt-32");
-    			add_location(main, file$2, 45, 0, 1342);
+    			add_location(main, file$2, 65, 0, 1933);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1334,29 +1517,10 @@ var app = (function () {
     		},
     		p: function update(ctx, [dirty]) {
     			const todoform_changes = {};
-
-    			if (!updating_text && dirty & /*text*/ 4) {
-    				updating_text = true;
-    				todoform_changes.text = /*text*/ ctx[2];
-    				add_flush_callback(() => updating_text = false);
-    			}
-
-    			if (!updating_todos && dirty & /*todos*/ 1) {
-    				updating_todos = true;
-    				todoform_changes.todos = /*todos*/ ctx[0];
-    				add_flush_callback(() => updating_todos = false);
-    			}
-
+    			if (dirty & /*todos*/ 1) todoform_changes.todos = /*todos*/ ctx[0];
     			todoform.$set(todoform_changes);
     			const todolist_changes = {};
     			if (dirty & /*todos*/ 1) todolist_changes.todos = /*todos*/ ctx[0];
-
-    			if (!updating_todo && dirty & /*todo*/ 2) {
-    				updating_todo = true;
-    				todolist_changes.todo = /*todo*/ ctx[1];
-    				add_flush_callback(() => updating_todo = false);
-    			}
-
     			todolist.$set(todolist_changes);
     		},
     		i: function intro(local) {
@@ -1389,9 +1553,8 @@ var app = (function () {
     }
 
     function instance$2($$self, $$props, $$invalidate) {
-    	let todos = [];
     	let todo;
-    	let text = "";
+    	let todos;
 
     	onMount(async () => {
     		try {
@@ -1403,39 +1566,44 @@ var app = (function () {
     		}
     	});
 
-    	function todoform_text_binding(value) {
-    		text = value;
-    		$$invalidate(2, text);
-    	}
+    	const handleSubmit = async event => {
+    		let { text } = event.detail;
+    		text.trim();
+    		console.log(text);
+    		if (!text) return;
 
-    	function todoform_todos_binding(value_1) {
-    		todos = value_1;
-    		$$invalidate(0, todos);
-    	}
+    		const res = await fetch("http://localhost:8888/api/todos", {
+    			method: "POST",
+    			headers: { "Content-Type": "application/json" },
+    			body: JSON.stringify({ text })
+    		}).then(res => res.json()).then(data => console.log(data)).then(text => text = "").catch(err => console.log(err));
 
-    	function todolist_todo_binding(value_2) {
-    		todo = value_2;
-    		$$invalidate(1, todo);
-    	}
+    		let newTodos = await fetch("http://localhost:8888/api/todos");
+    		$$invalidate(0, todos = await newTodos.json());
+    	};
+
+    	const handleRemove = async event => {
+    		const { id } = event.detail;
+
+    		const res = await fetch(`http://localhost:8888/api/todos/${id}`, {
+    			method: "DELETE",
+    			headers: { "Content-Type": "application/json" }
+    		}).then(res => console.log(res));
+
+    		let newTodos = await fetch("http://localhost:8888/api/todos");
+    		$$invalidate(0, todos = await newTodos.json());
+    	};
 
     	$$self.$capture_state = () => {
     		return {};
     	};
 
     	$$self.$inject_state = $$props => {
-    		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
     		if ("todo" in $$props) $$invalidate(1, todo = $$props.todo);
-    		if ("text" in $$props) $$invalidate(2, text = $$props.text);
+    		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
     	};
 
-    	return [
-    		todos,
-    		todo,
-    		text,
-    		todoform_text_binding,
-    		todoform_todos_binding,
-    		todolist_todo_binding
-    	];
+    	return [todos, todo, handleSubmit, handleRemove];
     }
 
     class Todos extends SvelteComponentDev {

@@ -1,39 +1,20 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
-  export let text = "";
-
-  export let todos;
-
+  export let todos = [];
+  let text;
   let todoInput;
 
   onMount(() => todoInput.focus());
 
-  async function handleSubmit() {
-    text = text.trim();
-    if (!text) return;
+  const dispatch = createEventDispatcher();
 
-    const res = await fetch("http://localhost:8888/api/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        text
-      })
-    })
-      .then(res => res.json())
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
-
-    let newTodos = await fetch("http://localhost:8888/api/todos");
-
-    todos = await newTodos.json();
-
+  const add = () => {
+    dispatch("add", {
+      text
+    });
     text = "";
-
-    todoInput.focus();
-  }
+  };
 </script>
 
 <style>
@@ -43,7 +24,7 @@
 </style>
 
 <div class="input-todo">
-  <form class="mb-3" id="todo-input" on:submit|preventDefault={handleSubmit}>
+  <form class="mb-3" id="todo-input" on:submit|preventDefault={add}>
     <input
       bind:this={todoInput}
       bind:value={text}

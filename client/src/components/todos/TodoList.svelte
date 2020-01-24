@@ -1,12 +1,17 @@
 <script>
-  // import Todo from "./Todo.svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { flip } from "svelte/animate";
+  import { fade } from "svelte/transition";
   export let loading = false;
   export let todos = [];
-  let todo;
-  // export let todo;
+  export let todo;
+
   const deleteIcon = "images/close-orange.svg";
   const verticalDots = "images/vertical-dots.svg";
+
+  const pinTodoImage = "images/clip-red-400.svg";
+  const archiveTodoImage = "images/archive-red-400.svg";
+  const deleteTodoImage = "images/trash-red-400.svg";
 
   // reactive declarations (computed prop in other frameworks)
   $: noTodos = todos.length === 0;
@@ -16,21 +21,21 @@
     ...todos.filter(t => t.state !== "TODO_PINNED")
   ];
 
-  const handleRemove = async todo => {
-    const res = await fetch(`http://localhost:8888/api/todos/${todo._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(res => console.log(res));
-    let newTodos = await fetch("http://localhost:8888/api/todos");
-    todos = await newTodos.json();
+  const dispatch = createEventDispatcher();
+
+  const remove = todo => {
+    dispatch("remove", {
+      id: todo._id
+    });
   };
+
+  // const toggleIcons = e => {
+  //   e.preventDefault();
+  //   console.log("I clicked it");
+  //   showIcons !== showIcons;
+  //   console.log(showIcons);
+  // };
 </script>
-
-<style>
-
-</style>
 
 {#if loading}
   <div class="h-32 flex justify-center items-center">
@@ -46,8 +51,8 @@
 {/if}
 {#each todosInOrder as todo (todo._id)}
   <div
-    class="w-full flex items-center bg-black mb-1 relative z-0"
-    animate:flip={{ delay: 150, duration: 200 }}>
+    class="relative w-full flex items-center bg-black mb-1 relative z-0"
+    animate:flip={{ delay: 150, duration: 400 }}>
     <div class="flex-1">
       {#if todo.status === 'TODO_ARCHIVED'}
         <p class="font-sans font-normal text-md p-3 text-white z-10">
@@ -59,10 +64,24 @@
         </p>
       {/if}
     </div>
-    <div class="w-10 flex justify-center">
-      <a href="/" on:click|preventDefault={handleRemove(todo)}>
+
+    <div class="w-10 flex justify-center relative">
+      <a
+        href="/"
+        on:click|preventDefault={remove(todo)}
+        class="w-full flex justify-center">
         <img src={verticalDots} alt="Remove todo" class="h-6" />
       </a>
+
+      <!-- <a href="/" class="w-full flex justify-center">
+        <img src={verticalDots} alt="Show menu" class="h-6" />
+      </a> -->
+
+    </div>
+    <div class="absolute flex flex-row right-0 hidden" transition:fade>
+      <img src={pinTodoImage} alt="Pin todo" class="mx-2" />
+      <img src={archiveTodoImage} alt="Archive todo" class="mx-2" />
+      <img src={deleteTodoImage} alt="Delete todo" class="mx-2" />
     </div>
   </div>
 {/each}
