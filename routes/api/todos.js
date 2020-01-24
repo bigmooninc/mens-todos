@@ -1,12 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const Todo = require("../../models/Todo");
+const { check, validationResult } = require('express-validator');
+const Todo = require('../../models/Todo');
 
 // @route   POST api/todos
 // @desc    Add a todo
 // @access  Private
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -17,8 +17,10 @@ router.post("/", async (req, res) => {
   try {
     const newTodo = new Todo({
       text,
+      details: '',
       pinned: false,
-      archived: false
+      archived: false,
+      priority: 'low'
     });
 
     const todo = await newTodo.save();
@@ -26,41 +28,43 @@ router.post("/", async (req, res) => {
     res.json(todo);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @route   GET api/todos
 // @desc    Get all user's todos
 // @access  Private
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const todos = await Todo.find().sort({ date: -1 });
     res.json(todos);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @route   PUT api/todos
 // @desc    Update a todo
 // @access  Private
-router.put("/:id", async (req, res) => {
-  const { text, completed, inProcess } = req.body;
+router.put('/:id', async (req, res) => {
+  const { text, clipped, archived, priority } = req.body;
 
-  // Build contact object
+  // Build todo object
   const todoFields = {};
   if (text) todoFields.text = text;
+  if (details) todoFields.details = details;
   if (archived) todoFields.archived = archived;
-  if (pinned) todoFields.pinned = pinned;
+  if (clipped) todoFields.clipped = clipped;
+  if (priority) todoFields.priority = priority;
 
   try {
     let todo = await Todo.findById(req.params.id);
 
     // Make sure user owns todo
     if (!todo) {
-      return res.status(400).json({ msg: "Not authorized" });
+      return res.status(400).json({ msg: 'Not authorized' });
     }
 
     todo = await Todo.findByIdAndUpdate(
@@ -74,7 +78,7 @@ router.put("/:id", async (req, res) => {
     res.json(todo);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -82,11 +86,11 @@ router.put("/:id", async (req, res) => {
 // @desc        Delete a todo
 // @access      Private
 
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     let todo = await Todo.findById(req.params.id);
     if (!todo) {
-      res.status(404).json({ msg: "Todo not found" });
+      res.status(404).json({ msg: 'Todo not found' });
     }
 
     // Make sure user owns todo
@@ -96,10 +100,10 @@ router.delete("/:id", async (req, res) => {
 
     await Todo.findByIdAndRemove(req.params.id);
 
-    res.json({ msg: "Todo removed" });
+    res.json({ msg: 'Todo removed' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

@@ -1,23 +1,23 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TodoSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "user"
-  },
   text: {
     type: String,
     required: true
   },
-  pinned: {
+  details: {
+    type: String
+  },
+  clipped: {
     type: Boolean
   },
   archived: {
     type: Boolean
   },
-  loading: {
-    type: Boolean
+  prioity: {
+    type: String,
+    enum: ['high', 'medium', 'low']
   },
   date: {
     type: Date,
@@ -25,4 +25,4 @@ const TodoSchema = new Schema({
   }
 });
 
-module.exports = Todo = mongoose.model("todo", TodoSchema);
+module.exports = Todo = mongoose.model('todo', TodoSchema);

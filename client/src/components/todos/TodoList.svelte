@@ -51,17 +51,29 @@
 {/if}
 {#each todosInOrder as todo (todo._id)}
   <div
-    class="relative w-full flex items-center bg-black mb-1 relative z-0"
+    class="relative w-full flex items-center bg-black mb-1 relative z-0 p-3"
     animate:flip={{ delay: 150, duration: 400 }}>
     <div class="flex-1">
       {#if todo.status === 'TODO_ARCHIVED'}
-        <p class="font-sans font-normal text-md p-3 text-white z-10">
-          {todo.text}
-        </p>
+        <p class="font-sans font-normal text-lg text-white z-10">{todo.text}</p>
+        {#if todo.details}
+          <p class="font-sans font-normal text-xs text-white p-3">
+            Do sunt laborum sit commodo laborum deserunt. Esse proident magna
+            culpa velit proident cillum. Fugiat officia nostrud cillum elit
+            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod
+            do irure eu.
+          </p>
+        {/if}
       {:else}
-        <p class="font-sans font-normal text-md p-3 text-white z-10">
-          {todo.text}
-        </p>
+        <p class="font-sans font-normal text-lg text-white z-10">{todo.text}</p>
+        {#if todo.details}
+          <p class="font-sans font-normal text-sm opacity-50 italic text-white">
+            Do sunt laborum sit commodo laborum deserunt. Esse proident magna
+            culpa velit proident cillum. Fugiat officia nostrud cillum elit
+            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod
+            do irure eu.
+          </p>
+        {/if}
       {/if}
     </div>
 
