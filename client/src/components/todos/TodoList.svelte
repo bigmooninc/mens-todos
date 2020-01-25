@@ -39,41 +39,30 @@
     <p>Loading...</p>
   </div>
 {/if}
-{#if emptyTodos}
+<!-- {#if emptyTodos}
   <div class="h-32 flex justify-center items-center">
     <p class="text-white opacity-75 font-sans font-normal text-xl">
       There are no todos. Create one!
     </p>
   </div>
-{/if}
+{/if} -->
 {#each todosInOrder as todo (todo._id)}
   <div
     class="relative w-full flex items-center bg-black mb-2 relative z-0 p-3"
     animate:flip={{ delay: 150, duration: 400 }}>
     <div class="relative flex-1">
-      {#if todo.status === 'TODO_ARCHIVED'}
-        <p class="font-sans font-normal text-lg text-white z-10">{todo.text}</p>
-        {#if todo.details}
-          <p class="font-sans font-normal text-xs text-white p-3">
-            {todo.details}
-          </p>
-        {/if}
-      {:else}
-        <p
-          class="{todo.completed ? 'line-through opacity-50' : ''} font-sans
-          font-normal text-lg text-white z-10">
-          {todo.text}
+      <p
+        class="{todo.completed ? 'line-through opacity-50' : ''} font-sans
+        font-normal text-lg text-white z-10">
+        {todo.text}
+      </p>
+      {#if todo.details}
+        <p class="font-sans font-normal text-sm opacity-50 italic text-white">
+          {todo.details}
         </p>
-        {#if todo.details}
-          <p class="font-sans font-normal text-sm opacity-50 italic text-white">
-            {todo.details}
-          </p>
-        {/if}
       {/if}
     </div>
-
     <div class="relative w-20 flex justify-center items-center">
-
       <a
         href="/"
         on:click|preventDefault={complete(todo)}

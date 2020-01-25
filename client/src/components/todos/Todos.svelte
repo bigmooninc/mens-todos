@@ -5,7 +5,7 @@
   import TodoList from "./TodoList.svelte";
 
   let todo;
-  let todos;
+  let todos = [];
 
   onMount(async () => {
     try {
@@ -72,7 +72,19 @@
     let updateToCompletedTodos = await fetch("http://localhost:8888/api/todos");
     todos = await updateToCompletedTodos.json();
   };
+
+  // console.log("These are: ", todos);
+
+  $: numActive = todos.filter(todo => !todo.completed).length;
+
+  $: numCompleted = todos.filter(todo => todo.completed).length;
 </script>
+
+<style>
+  .badge {
+    margin: -10px -20px 0 0;
+  }
+</style>
 
 <main class="w-full max-w-xl mx-auto mt-32">
   <h1 class="text-center text-white mb-4 text-3xl font-sans font-extrabold">
@@ -88,7 +100,7 @@
         All
       </a>
     </div>
-    <div>
+    <div class="relative">
       <a
         class="font-sans font-normal text-white hover:text-purple-500
         hover:no-underline transition-500 opacity-25 hover:opacity-100
@@ -96,8 +108,14 @@
         href="#">
         Active
       </a>
+      <div
+        class="absolute top-0 right-0 bg-purple-500 text-white font-sans
+        font-extrabold text-xs w-5 h-5 flex justify-center items-center
+        rounded-full badge">
+        {numActive}
+      </div>
     </div>
-    <div>
+    <div class="relative">
       <a
         class="font-sans font-normal text-white hover:text-purple-500
         hover:no-underline transition-500 opacity-25 hover:opacity-100
@@ -105,6 +123,12 @@
         href="#">
         Completed
       </a>
+      <div
+        class="absolute top-0 right-0 bg-purple-500 text-white font-sans
+        font-extrabold text-xs w-5 h-5 flex justify-center items-center
+        rounded-full badge">
+        {numCompleted}
+      </div>
     </div>
   </div>
   <TodoForm {todos} on:add={handleSubmit} />
