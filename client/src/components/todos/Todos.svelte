@@ -53,18 +53,64 @@
     let newTodos = await fetch("http://localhost:8888/api/todos");
     todos = await newTodos.json();
   };
-</script>
 
-<style>
-  h3 {
-    @apply mb-4 ml-1 font-bold;
-  }
-</style>
+  const handleComplete = async event => {
+    const { id, completed } = event.detail;
+    const res = await fetch(`http://localhost:8888/api/todos/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        completed
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.log(err));
+
+    let updateToCompletedTodos = await fetch("http://localhost:8888/api/todos");
+    todos = await updateToCompletedTodos.json();
+  };
+</script>
 
 <main class="w-full max-w-xl mx-auto mt-32">
   <h1 class="text-center text-white mb-4 text-3xl font-sans font-extrabold">
     Todo List with Svelte
   </h1>
+  <div class="flex mx-auto w-2/3 justify-between mb-5">
+    <div>
+      <a
+        class="font-sans font-normal text-white hover:text-purple-500
+        hover:no-underline transition-500 opacity-25 hover:opacity-100
+        transition-opacity"
+        href="#">
+        All
+      </a>
+    </div>
+    <div>
+      <a
+        class="font-sans font-normal text-white hover:text-purple-500
+        hover:no-underline transition-500 opacity-25 hover:opacity-100
+        transition:opacity"
+        href="#">
+        Active
+      </a>
+    </div>
+    <div>
+      <a
+        class="font-sans font-normal text-white hover:text-purple-500
+        hover:no-underline transition-500 opacity-25 hover:opacity-100
+        transition:opacity"
+        href="#">
+        Completed
+      </a>
+    </div>
+  </div>
   <TodoForm {todos} on:add={handleSubmit} />
-  <TodoList {todos} on:remove={handleRemove} {todo} />
+  <TodoList
+    {todos}
+    on:remove={handleRemove}
+    {todo}
+    on:complete={handleComplete} />
 </main>

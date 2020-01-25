@@ -18,8 +18,7 @@ router.post('/', async (req, res) => {
     const newTodo = new Todo({
       text,
       details: '',
-      pinned: false,
-      archived: false,
+      completed: false,
       priority: 'low'
     });
 
@@ -47,34 +46,25 @@ router.get('/', async (req, res) => {
 
 // @route   PUT api/todos
 // @desc    Update a todo
-// @access  Private
-router.put('/:id', async (req, res) => {
-  const { text, clipped, archived, priority } = req.body;
+// @access  Public
+router.patch('/:id', async (req, res) => {
+  const { text, details, completed, priority } = req.body;
 
-  // Build todo object
-  const todoFields = {};
-  if (text) todoFields.text = text;
-  if (details) todoFields.details = details;
-  if (archived) todoFields.archived = archived;
-  if (clipped) todoFields.clipped = clipped;
-  if (priority) todoFields.priority = priority;
+  const todoObj = {};
+
+  if (text) todoObj.text = text;
+  if (details) todoObj.details = details;
+  if (completed) todoObj.completed = completed;
+  if (priority) todoObj.priority = priority;
 
   try {
-    let todo = await Todo.findById(req.params.id);
-
-    // Make sure user owns todo
-    if (!todo) {
-      return res.status(400).json({ msg: 'Not authorized' });
-    }
-
-    todo = await Todo.findByIdAndUpdate(
+    let todo = await Todo.findByIdAndUpdate(
       req.params.id,
       {
-        $set: todoFields
+        $set: todoObj
       },
       { new: true }
     );
-
     res.json(todo);
   } catch (err) {
     console.error(err.message);
@@ -92,11 +82,6 @@ router.delete('/:id', async (req, res) => {
     if (!todo) {
       res.status(404).json({ msg: 'Todo not found' });
     }
-
-    // Make sure user owns todo
-    // if (todo.user.toString() !== req.user.id) {
-    //   return res.status(401).json({ msg: "Not authorized" });
-    // }
 
     await Todo.findByIdAndRemove(req.params.id);
 

@@ -320,35 +320,8 @@ var app = (function () {
             $$.after_update.forEach(add_render_callback);
         }
     }
-
-    let promise;
-    function wait() {
-        if (!promise) {
-            promise = Promise.resolve();
-            promise.then(() => {
-                promise = null;
-            });
-        }
-        return promise;
-    }
-    function dispatch(node, direction, kind) {
-        node.dispatchEvent(custom_event(`${direction ? 'intro' : 'outro'}${kind}`));
-    }
     const outroing = new Set();
     let outros;
-    function group_outros() {
-        outros = {
-            r: 0,
-            c: [],
-            p: outros // parent group
-        };
-    }
-    function check_outros() {
-        if (!outros.r) {
-            run_all(outros.c);
-        }
-        outros = outros.p;
-    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -371,120 +344,14 @@ var app = (function () {
             block.o(local);
         }
     }
-    const null_transition = { duration: 0 };
-    function create_bidirectional_transition(node, fn, params, intro) {
-        let config = fn(node, params);
-        let t = intro ? 0 : 1;
-        let running_program = null;
-        let pending_program = null;
-        let animation_name = null;
-        function clear_animation() {
-            if (animation_name)
-                delete_rule(node, animation_name);
-        }
-        function init(program, duration) {
-            const d = program.b - t;
-            duration *= Math.abs(d);
-            return {
-                a: t,
-                b: program.b,
-                d,
-                duration,
-                start: program.start,
-                end: program.start + duration,
-                group: program.group
-            };
-        }
-        function go(b) {
-            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
-            const program = {
-                start: now() + delay,
-                b
-            };
-            if (!b) {
-                // @ts-ignore todo: improve typings
-                program.group = outros;
-                outros.r += 1;
-            }
-            if (running_program) {
-                pending_program = program;
-            }
-            else {
-                // if this is an intro, and there's a delay, we need to do
-                // an initial tick and/or apply CSS animation immediately
-                if (css) {
-                    clear_animation();
-                    animation_name = create_rule(node, t, b, duration, delay, easing, css);
-                }
-                if (b)
-                    tick(0, 1);
-                running_program = init(program, duration);
-                add_render_callback(() => dispatch(node, b, 'start'));
-                loop(now => {
-                    if (pending_program && now > pending_program.start) {
-                        running_program = init(pending_program, duration);
-                        pending_program = null;
-                        dispatch(node, running_program.b, 'start');
-                        if (css) {
-                            clear_animation();
-                            animation_name = create_rule(node, t, running_program.b, running_program.duration, 0, easing, config.css);
-                        }
-                    }
-                    if (running_program) {
-                        if (now >= running_program.end) {
-                            tick(t = running_program.b, 1 - t);
-                            dispatch(node, running_program.b, 'end');
-                            if (!pending_program) {
-                                // we're done
-                                if (running_program.b) {
-                                    // intro — we can tidy up immediately
-                                    clear_animation();
-                                }
-                                else {
-                                    // outro — needs to be coordinated
-                                    if (!--running_program.group.r)
-                                        run_all(running_program.group.c);
-                                }
-                            }
-                            running_program = null;
-                        }
-                        else if (now >= running_program.start) {
-                            const p = now - running_program.start;
-                            t = running_program.a + running_program.d * easing(p / running_program.duration);
-                            tick(t, 1 - t);
-                        }
-                    }
-                    return !!(running_program || pending_program);
-                });
-            }
-        }
-        return {
-            run(b) {
-                if (is_function(config)) {
-                    wait().then(() => {
-                        // @ts-ignore
-                        config = config();
-                        go(b);
-                    });
-                }
-                else {
-                    go(b);
-                }
-            },
-            end() {
-                clear_animation();
-                running_program = pending_program = null;
-            }
-        };
+
+    function destroy_block(block, lookup) {
+        block.d(1);
+        lookup.delete(block.key);
     }
-    function outro_and_destroy_block(block, lookup) {
-        transition_out(block, 1, 1, () => {
-            lookup.delete(block.key);
-        });
-    }
-    function fix_and_outro_and_destroy_block(block, lookup) {
+    function fix_and_destroy_block(block, lookup) {
         block.f();
-        outro_and_destroy_block(block, lookup);
+        destroy_block(block, lookup);
     }
     function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
         let o = old_blocks.length;
@@ -738,16 +605,6 @@ var app = (function () {
         return f * f * f + 1.0;
     }
 
-    function fade(node, { delay = 0, duration = 400, easing = identity }) {
-        const o = +getComputedStyle(node).opacity;
-        return {
-            delay,
-            duration,
-            easing,
-            css: t => `opacity: ${t * o}`
-        };
-    }
-
     /* src/components/todos/TodoForm.svelte generated by Svelte v3.17.1 */
     const file = "src/components/todos/TodoForm.svelte";
 
@@ -917,7 +774,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (40:0) {#if loading}
+    // (37:0) {#if loading}
     function create_if_block_4(ctx) {
     	let div;
     	let p;
@@ -927,9 +784,9 @@ var app = (function () {
     			div = element("div");
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file$1, 41, 4, 1150);
+    			add_location(p, file$1, 38, 4, 1000);
     			attr_dev(div, "class", "h-32 flex justify-center items-center");
-    			add_location(div, file$1, 40, 2, 1094);
+    			add_location(div, file$1, 37, 2, 944);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -944,14 +801,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(40:0) {#if loading}",
+    		source: "(37:0) {#if loading}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (45:0) {#if emptyTodos}
+    // (42:0) {#if emptyTodos}
     function create_if_block_3(ctx) {
     	let div;
     	let p;
@@ -962,9 +819,9 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "There are no todos. Create one!";
     			attr_dev(p, "class", "text-white opacity-75 font-sans font-normal text-xl");
-    			add_location(p, file$1, 46, 4, 1258);
+    			add_location(p, file$1, 43, 4, 1108);
     			attr_dev(div, "class", "h-32 flex justify-center items-center");
-    			add_location(div, file$1, 45, 2, 1202);
+    			add_location(div, file$1, 42, 2, 1052);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -979,18 +836,19 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(45:0) {#if emptyTodos}",
+    		source: "(42:0) {#if emptyTodos}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (67:6) {:else}
+    // (61:6) {:else}
     function create_else_block(ctx) {
     	let p;
     	let t0_value = /*todo*/ ctx[1].text + "";
     	let t0;
+    	let p_class_value;
     	let t1;
     	let if_block_anchor;
     	let if_block = /*todo*/ ctx[1].details && create_if_block_2(ctx);
@@ -1002,8 +860,12 @@ var app = (function () {
     			t1 = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			attr_dev(p, "class", "font-sans font-normal text-lg text-white z-10");
-    			add_location(p, file$1, 67, 8, 2113);
+
+    			attr_dev(p, "class", p_class_value = "" + ((/*todo*/ ctx[1].completed
+    			? "line-through opacity-50"
+    			: "") + " font-sans\n          font-normal text-lg text-white z-10"));
+
+    			add_location(p, file$1, 61, 8, 1739);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1015,8 +877,16 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			if (dirty & /*todosInOrder*/ 8 && t0_value !== (t0_value = /*todo*/ ctx[1].text + "")) set_data_dev(t0, t0_value);
 
+    			if (dirty & /*todosInOrder*/ 8 && p_class_value !== (p_class_value = "" + ((/*todo*/ ctx[1].completed
+    			? "line-through opacity-50"
+    			: "") + " font-sans\n          font-normal text-lg text-white z-10"))) {
+    				attr_dev(p, "class", p_class_value);
+    			}
+
     			if (/*todo*/ ctx[1].details) {
-    				if (!if_block) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
     					if_block = create_if_block_2(ctx);
     					if_block.c();
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -1038,14 +908,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(67:6) {:else}",
+    		source: "(61:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:6) {#if todo.status === 'TODO_ARCHIVED'}
+    // (54:6) {#if todo.status === 'TODO_ARCHIVED'}
     function create_if_block(ctx) {
     	let p;
     	let t0_value = /*todo*/ ctx[1].text + "";
@@ -1062,7 +932,7 @@ var app = (function () {
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
     			attr_dev(p, "class", "font-sans font-normal text-lg text-white z-10");
-    			add_location(p, file$1, 57, 8, 1635);
+    			add_location(p, file$1, 54, 8, 1494);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1075,7 +945,9 @@ var app = (function () {
     			if (dirty & /*todosInOrder*/ 8 && t0_value !== (t0_value = /*todo*/ ctx[1].text + "")) set_data_dev(t0, t0_value);
 
     			if (/*todo*/ ctx[1].details) {
-    				if (!if_block) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
     					if_block = create_if_block_1(ctx);
     					if_block.c();
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -1097,26 +969,32 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(57:6) {#if todo.status === 'TODO_ARCHIVED'}",
+    		source: "(54:6) {#if todo.status === 'TODO_ARCHIVED'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:8) {#if todo.details}
+    // (67:8) {#if todo.details}
     function create_if_block_2(ctx) {
     	let p;
+    	let t_value = /*todo*/ ctx[1].details + "";
+    	let t;
 
     	const block = {
     		c: function create() {
     			p = element("p");
-    			p.textContent = "Do sunt laborum sit commodo laborum deserunt. Esse proident magna\n            culpa velit proident cillum. Fugiat officia nostrud cillum elit\n            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod\n            do irure eu.";
+    			t = text(t_value);
     			attr_dev(p, "class", "font-sans font-normal text-sm opacity-50 italic text-white");
-    			add_location(p, file$1, 69, 10, 2223);
+    			add_location(p, file$1, 67, 10, 1939);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*todosInOrder*/ 8 && t_value !== (t_value = /*todo*/ ctx[1].details + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
@@ -1127,26 +1005,32 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(69:8) {#if todo.details}",
+    		source: "(67:8) {#if todo.details}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:8) {#if todo.details}
+    // (56:8) {#if todo.details}
     function create_if_block_1(ctx) {
     	let p;
+    	let t_value = /*todo*/ ctx[1].details + "";
+    	let t;
 
     	const block = {
     		c: function create() {
     			p = element("p");
-    			p.textContent = "Do sunt laborum sit commodo laborum deserunt. Esse proident magna\n            culpa velit proident cillum. Fugiat officia nostrud cillum elit\n            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod\n            do irure eu.";
+    			t = text(t_value);
     			attr_dev(p, "class", "font-sans font-normal text-xs text-white p-3");
-    			add_location(p, file$1, 59, 10, 1745);
+    			add_location(p, file$1, 56, 10, 1604);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*todosInOrder*/ 8 && t_value !== (t_value = /*todo*/ ctx[1].details + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
@@ -1157,37 +1041,30 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(59:8) {#if todo.details}",
+    		source: "(56:8) {#if todo.details}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:0) {#each todosInOrder as todo (todo._id)}
+    // (49:0) {#each todosInOrder as todo (todo._id)}
     function create_each_block(key_1, ctx) {
-    	let div3;
+    	let div2;
     	let div0;
     	let t0;
     	let div1;
-    	let a;
+    	let a0;
     	let img0;
     	let img0_src_value;
+    	let a0_class_value;
     	let t1;
-    	let div2;
+    	let a1;
     	let img1;
     	let img1_src_value;
     	let t2;
-    	let img2;
-    	let img2_src_value;
-    	let t3;
-    	let img3;
-    	let img3_src_value;
-    	let div2_transition;
-    	let t4;
     	let rect;
     	let stop_animation = noop;
-    	let current;
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
@@ -1202,78 +1079,74 @@ var app = (function () {
     		key: key_1,
     		first: null,
     		c: function create() {
-    			div3 = element("div");
+    			div2 = element("div");
     			div0 = element("div");
     			if_block.c();
     			t0 = space();
     			div1 = element("div");
-    			a = element("a");
+    			a0 = element("a");
     			img0 = element("img");
     			t1 = space();
-    			div2 = element("div");
+    			a1 = element("a");
     			img1 = element("img");
     			t2 = space();
-    			img2 = element("img");
-    			t3 = space();
-    			img3 = element("img");
-    			t4 = space();
-    			attr_dev(div0, "class", "flex-1");
-    			add_location(div0, file$1, 55, 4, 1562);
-    			if (img0.src !== (img0_src_value = verticalDots)) attr_dev(img0, "src", img0_src_value);
-    			attr_dev(img0, "alt", "Remove todo");
-    			attr_dev(img0, "class", "h-6");
-    			add_location(img0, file$1, 84, 8, 2784);
-    			attr_dev(a, "href", "/");
-    			attr_dev(a, "class", "w-full flex justify-center");
-    			add_location(a, file$1, 80, 6, 2665);
-    			attr_dev(div1, "class", "w-10 flex justify-center relative");
-    			add_location(div1, file$1, 79, 4, 2611);
-    			if (img1.src !== (img1_src_value = pinTodoImage)) attr_dev(img1, "src", img1_src_value);
-    			attr_dev(img1, "alt", "Pin todo");
-    			attr_dev(img1, "class", "mx-2");
-    			add_location(img1, file$1, 93, 6, 3080);
-    			if (img2.src !== (img2_src_value = archiveTodoImage)) attr_dev(img2, "src", img2_src_value);
-    			attr_dev(img2, "alt", "Archive todo");
-    			attr_dev(img2, "class", "mx-2");
-    			add_location(img2, file$1, 94, 6, 3141);
-    			if (img3.src !== (img3_src_value = deleteTodoImage)) attr_dev(img3, "src", img3_src_value);
-    			attr_dev(img3, "alt", "Delete todo");
-    			attr_dev(img3, "class", "mx-2");
-    			add_location(img3, file$1, 95, 6, 3210);
-    			attr_dev(div2, "class", "absolute flex flex-row right-0 hidden");
-    			add_location(div2, file$1, 92, 4, 3006);
-    			attr_dev(div3, "class", "relative w-full flex items-center bg-black mb-1 relative z-0 p-3");
-    			add_location(div3, file$1, 52, 2, 1426);
-    			this.first = div3;
+    			attr_dev(div0, "class", "relative flex-1");
+    			add_location(div0, file$1, 52, 4, 1412);
+    			if (img0.src !== (img0_src_value = completeTodoImage)) attr_dev(img0, "src", img0_src_value);
+    			attr_dev(img0, "alt", "Pin todo");
+    			attr_dev(img0, "class", "h-4 mx-2");
+    			add_location(img0, file$1, 81, 8, 2365);
+    			attr_dev(a0, "href", "/");
+    			attr_dev(a0, "class", a0_class_value = "" + ((/*todo*/ ctx[1].completed ? "opacity-100" : "opacity-25") + " hover:opacity-100\n        transition-500 will-change-opacity"));
+    			add_location(a0, file$1, 76, 6, 2162);
+    			if (img1.src !== (img1_src_value = deleteTodoImage)) attr_dev(img1, "src", img1_src_value);
+    			attr_dev(img1, "alt", "Delete todo");
+    			attr_dev(img1, "class", "h-4 mx-2");
+    			add_location(img1, file$1, 87, 8, 2602);
+    			attr_dev(a1, "href", "/");
+    			attr_dev(a1, "class", "opacity-25 hover:opacity-100 transition-500 will-change-opacity");
+    			add_location(a1, file$1, 83, 6, 2446);
+    			attr_dev(div1, "class", "relative w-20 flex justify-center items-center");
+    			add_location(div1, file$1, 74, 4, 2094);
+    			attr_dev(div2, "class", "relative w-full flex items-center bg-black mb-2 relative z-0 p-3");
+    			add_location(div2, file$1, 49, 2, 1276);
+    			this.first = div2;
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div3, anchor);
-    			append_dev(div3, div0);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
     			if_block.m(div0, null);
-    			append_dev(div3, t0);
-    			append_dev(div3, div1);
-    			append_dev(div1, a);
-    			append_dev(a, img0);
-    			append_dev(div3, t1);
-    			append_dev(div3, div2);
-    			append_dev(div2, img1);
+    			append_dev(div2, t0);
+    			append_dev(div2, div1);
+    			append_dev(div1, a0);
+    			append_dev(a0, img0);
+    			append_dev(div1, t1);
+    			append_dev(div1, a1);
+    			append_dev(a1, img1);
     			append_dev(div2, t2);
-    			append_dev(div2, img2);
-    			append_dev(div2, t3);
-    			append_dev(div2, img3);
-    			append_dev(div3, t4);
-    			current = true;
 
-    			dispose = listen_dev(
-    				a,
-    				"click",
-    				prevent_default(function () {
-    					if (is_function(/*remove*/ ctx[4](/*todo*/ ctx[1]))) /*remove*/ ctx[4](/*todo*/ ctx[1]).apply(this, arguments);
-    				}),
-    				false,
-    				true,
-    				false
-    			);
+    			dispose = [
+    				listen_dev(
+    					a0,
+    					"click",
+    					prevent_default(function () {
+    						if (is_function(/*complete*/ ctx[5](/*todo*/ ctx[1]))) /*complete*/ ctx[5](/*todo*/ ctx[1]).apply(this, arguments);
+    					}),
+    					false,
+    					true,
+    					false
+    				),
+    				listen_dev(
+    					a1,
+    					"click",
+    					prevent_default(function () {
+    						if (is_function(/*remove*/ ctx[4](/*todo*/ ctx[1]))) /*remove*/ ctx[4](/*todo*/ ctx[1]).apply(this, arguments);
+    					}),
+    					false,
+    					true,
+    					false
+    				)
+    			];
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
@@ -1289,38 +1162,26 @@ var app = (function () {
     					if_block.m(div0, null);
     				}
     			}
+
+    			if (dirty & /*todosInOrder*/ 8 && a0_class_value !== (a0_class_value = "" + ((/*todo*/ ctx[1].completed ? "opacity-100" : "opacity-25") + " hover:opacity-100\n        transition-500 will-change-opacity"))) {
+    				attr_dev(a0, "class", a0_class_value);
+    			}
     		},
     		r: function measure() {
-    			rect = div3.getBoundingClientRect();
+    			rect = div2.getBoundingClientRect();
     		},
     		f: function fix() {
-    			fix_position(div3);
+    			fix_position(div2);
     			stop_animation();
     		},
     		a: function animate() {
     			stop_animation();
-    			stop_animation = create_animation(div3, rect, flip, { delay: 150, duration: 400 });
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-
-    			add_render_callback(() => {
-    				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, true);
-    				div2_transition.run(1);
-    			});
-
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, false);
-    			div2_transition.run(0);
-    			current = false;
+    			stop_animation = create_animation(div2, rect, flip, { delay: 150, duration: 400 });
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div3);
+    			if (detaching) detach_dev(div2);
     			if_block.d();
-    			if (detaching && div2_transition) div2_transition.end();
-    			dispose();
+    			run_all(dispose);
     		}
     	};
 
@@ -1328,7 +1189,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(52:0) {#each todosInOrder as todo (todo._id)}",
+    		source: "(49:0) {#each todosInOrder as todo (todo._id)}",
     		ctx
     	});
 
@@ -1341,7 +1202,6 @@ var app = (function () {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
-    	let current;
     	let if_block0 = /*loading*/ ctx[0] && create_if_block_4(ctx);
     	let if_block1 = /*emptyTodos*/ ctx[2] && create_if_block_3(ctx);
     	let each_value = /*todosInOrder*/ ctx[3];
@@ -1380,7 +1240,6 @@ var app = (function () {
     			}
 
     			insert_dev(target, each_1_anchor, anchor);
-    			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			if (/*loading*/ ctx[0]) {
@@ -1406,28 +1265,12 @@ var app = (function () {
     			}
 
     			const each_value = /*todosInOrder*/ ctx[3];
-    			group_outros();
     			for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].r();
-    			each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, fix_and_outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
+    			each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, fix_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
     			for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].a();
-    			check_outros();
     		},
-    		i: function intro(local) {
-    			if (current) return;
-
-    			for (let i = 0; i < each_value.length; i += 1) {
-    				transition_in(each_blocks[i]);
-    			}
-
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				transition_out(each_blocks[i]);
-    			}
-
-    			current = false;
-    		},
+    		i: noop,
+    		o: noop,
     		d: function destroy(detaching) {
     			if (if_block0) if_block0.d(detaching);
     			if (detaching) detach_dev(t0);
@@ -1452,10 +1295,8 @@ var app = (function () {
 
     	return block;
     }
-    const verticalDots = "images/vertical-dots.svg";
-    const pinTodoImage = "images/clip-red-400.svg";
-    const archiveTodoImage = "images/archive-red-400.svg";
-    const deleteTodoImage = "images/trash-red-400.svg";
+    const completeTodoImage = "images/check-purple-500.svg";
+    const deleteTodoImage = "images/trash-purple-500.svg";
 
     function instance$1($$self, $$props, $$invalidate) {
     	let { loading = false } = $$props;
@@ -1467,6 +1308,10 @@ var app = (function () {
     		dispatch("remove", { id: todo._id });
     	};
 
+    	const complete = todo => {
+    		dispatch("complete", { id: todo._id, completed: true });
+    	};
+
     	const writable_props = ["loading", "todos", "todo"];
 
     	Object.keys($$props).forEach(key => {
@@ -1475,7 +1320,7 @@ var app = (function () {
 
     	$$self.$set = $$props => {
     		if ("loading" in $$props) $$invalidate(0, loading = $$props.loading);
-    		if ("todos" in $$props) $$invalidate(5, todos = $$props.todos);
+    		if ("todos" in $$props) $$invalidate(6, todos = $$props.todos);
     		if ("todo" in $$props) $$invalidate(1, todo = $$props.todo);
     	};
 
@@ -1492,7 +1337,7 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ("loading" in $$props) $$invalidate(0, loading = $$props.loading);
-    		if ("todos" in $$props) $$invalidate(5, todos = $$props.todos);
+    		if ("todos" in $$props) $$invalidate(6, todos = $$props.todos);
     		if ("todo" in $$props) $$invalidate(1, todo = $$props.todo);
     		if ("noTodos" in $$props) noTodos = $$props.noTodos;
     		if ("emptyTodos" in $$props) $$invalidate(2, emptyTodos = $$props.emptyTodos);
@@ -1504,15 +1349,15 @@ var app = (function () {
     	let todosInOrder;
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*todos*/ 32) {
+    		if ($$self.$$.dirty & /*todos*/ 64) {
     			 noTodos = todos.length === 0;
     		}
 
-    		if ($$self.$$.dirty & /*todos, loading*/ 33) {
+    		if ($$self.$$.dirty & /*todos, loading*/ 65) {
     			 $$invalidate(2, emptyTodos = todos.length === 0 && !loading);
     		}
 
-    		if ($$self.$$.dirty & /*todos*/ 32) {
+    		if ($$self.$$.dirty & /*todos*/ 64) {
     			 $$invalidate(3, todosInOrder = [
     				...todos.filter(t => t.state === "TODO_PINNED"),
     				...todos.filter(t => t.state !== "TODO_PINNED")
@@ -1520,13 +1365,13 @@ var app = (function () {
     		}
     	};
 
-    	return [loading, todo, emptyTodos, todosInOrder, remove, todos];
+    	return [loading, todo, emptyTodos, todosInOrder, remove, complete, todos];
     }
 
     class TodoList extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { loading: 0, todos: 5, todo: 1 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { loading: 0, todos: 6, todo: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1575,7 +1420,17 @@ var app = (function () {
     	let main;
     	let h1;
     	let t1;
-    	let t2;
+    	let div3;
+    	let div0;
+    	let a0;
+    	let t3;
+    	let div1;
+    	let a1;
+    	let t5;
+    	let div2;
+    	let a2;
+    	let t7;
+    	let t8;
     	let current;
 
     	const todoform = new TodoForm({
@@ -1594,6 +1449,7 @@ var app = (function () {
     		});
 
     	todolist.$on("remove", /*handleRemove*/ ctx[3]);
+    	todolist.$on("complete", /*handleComplete*/ ctx[4]);
 
     	const block = {
     		c: function create() {
@@ -1601,13 +1457,40 @@ var app = (function () {
     			h1 = element("h1");
     			h1.textContent = "Todo List with Svelte";
     			t1 = space();
+    			div3 = element("div");
+    			div0 = element("div");
+    			a0 = element("a");
+    			a0.textContent = "All";
+    			t3 = space();
+    			div1 = element("div");
+    			a1 = element("a");
+    			a1.textContent = "Active";
+    			t5 = space();
+    			div2 = element("div");
+    			a2 = element("a");
+    			a2.textContent = "Completed";
+    			t7 = space();
     			create_component(todoform.$$.fragment);
-    			t2 = space();
+    			t8 = space();
     			create_component(todolist.$$.fragment);
     			attr_dev(h1, "class", "text-center text-white mb-4 text-3xl font-sans font-extrabold");
-    			add_location(h1, file$2, 66, 2, 1980);
+    			add_location(h1, file$2, 77, 2, 2045);
+    			attr_dev(a0, "class", "font-sans font-normal text-white hover:text-purple-500\n        hover:no-underline transition-500 opacity-25 hover:opacity-100\n        transition-opacity");
+    			attr_dev(a0, "href", "#");
+    			add_location(a0, file$2, 82, 6, 2226);
+    			add_location(div0, file$2, 81, 4, 2214);
+    			attr_dev(a1, "class", "font-sans font-normal text-white hover:text-purple-500\n        hover:no-underline transition-500 opacity-25 hover:opacity-100\n        transition:opacity");
+    			attr_dev(a1, "href", "#");
+    			add_location(a1, file$2, 91, 6, 2466);
+    			add_location(div1, file$2, 90, 4, 2454);
+    			attr_dev(a2, "class", "font-sans font-normal text-white hover:text-purple-500\n        hover:no-underline transition-500 opacity-25 hover:opacity-100\n        transition:opacity");
+    			attr_dev(a2, "href", "#");
+    			add_location(a2, file$2, 100, 6, 2709);
+    			add_location(div2, file$2, 99, 4, 2697);
+    			attr_dev(div3, "class", "flex mx-auto w-2/3 justify-between mb-5");
+    			add_location(div3, file$2, 80, 2, 2156);
     			attr_dev(main, "class", "w-full max-w-xl mx-auto mt-32");
-    			add_location(main, file$2, 65, 0, 1933);
+    			add_location(main, file$2, 76, 0, 1998);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1616,8 +1499,18 @@ var app = (function () {
     			insert_dev(target, main, anchor);
     			append_dev(main, h1);
     			append_dev(main, t1);
+    			append_dev(main, div3);
+    			append_dev(div3, div0);
+    			append_dev(div0, a0);
+    			append_dev(div3, t3);
+    			append_dev(div3, div1);
+    			append_dev(div1, a1);
+    			append_dev(div3, t5);
+    			append_dev(div3, div2);
+    			append_dev(div2, a2);
+    			append_dev(main, t7);
     			mount_component(todoform, main, null);
-    			append_dev(main, t2);
+    			append_dev(main, t8);
     			mount_component(todolist, main, null);
     			current = true;
     		},
@@ -1700,6 +1593,19 @@ var app = (function () {
     		$$invalidate(0, todos = await newTodos.json());
     	};
 
+    	const handleComplete = async event => {
+    		const { id, completed } = event.detail;
+
+    		const res = await fetch(`http://localhost:8888/api/todos/${id}`, {
+    			method: "PATCH",
+    			body: JSON.stringify({ completed }),
+    			headers: { "Content-Type": "application/json" }
+    		}).then(res => res.json()).then(data => console.log(data)).catch(err => console.log(err));
+
+    		let updateToCompletedTodos = await fetch("http://localhost:8888/api/todos");
+    		$$invalidate(0, todos = await updateToCompletedTodos.json());
+    	};
+
     	$$self.$capture_state = () => {
     		return {};
     	};
@@ -1709,7 +1615,7 @@ var app = (function () {
     		if ("todos" in $$props) $$invalidate(0, todos = $$props.todos);
     	};
 
-    	return [todos, todo, handleSubmit, handleRemove];
+    	return [todos, todo, handleSubmit, handleRemove, handleComplete];
     }
 
     class Todos extends SvelteComponentDev {

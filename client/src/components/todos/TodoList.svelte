@@ -6,12 +6,9 @@
   export let todos = [];
   export let todo;
 
-  const deleteIcon = "images/close-orange.svg";
-  const verticalDots = "images/vertical-dots.svg";
-
   const pinTodoImage = "images/clip-red-400.svg";
-  const archiveTodoImage = "images/archive-red-400.svg";
-  const deleteTodoImage = "images/trash-red-400.svg";
+  const completeTodoImage = "images/check-purple-500.svg";
+  const deleteTodoImage = "images/trash-purple-500.svg";
 
   // reactive declarations (computed prop in other frameworks)
   $: noTodos = todos.length === 0;
@@ -29,12 +26,12 @@
     });
   };
 
-  // const toggleIcons = e => {
-  //   e.preventDefault();
-  //   console.log("I clicked it");
-  //   showIcons !== showIcons;
-  //   console.log(showIcons);
-  // };
+  const complete = todo => {
+    dispatch("complete", {
+      id: todo._id,
+      completed: true
+    });
+  };
 </script>
 
 {#if loading}
@@ -51,49 +48,47 @@
 {/if}
 {#each todosInOrder as todo (todo._id)}
   <div
-    class="relative w-full flex items-center bg-black mb-1 relative z-0 p-3"
+    class="relative w-full flex items-center bg-black mb-2 relative z-0 p-3"
     animate:flip={{ delay: 150, duration: 400 }}>
-    <div class="flex-1">
+    <div class="relative flex-1">
       {#if todo.status === 'TODO_ARCHIVED'}
         <p class="font-sans font-normal text-lg text-white z-10">{todo.text}</p>
         {#if todo.details}
           <p class="font-sans font-normal text-xs text-white p-3">
-            Do sunt laborum sit commodo laborum deserunt. Esse proident magna
-            culpa velit proident cillum. Fugiat officia nostrud cillum elit
-            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod
-            do irure eu.
+            {todo.details}
           </p>
         {/if}
       {:else}
-        <p class="font-sans font-normal text-lg text-white z-10">{todo.text}</p>
+        <p
+          class="{todo.completed ? 'line-through opacity-50' : ''} font-sans
+          font-normal text-lg text-white z-10">
+          {todo.text}
+        </p>
         {#if todo.details}
           <p class="font-sans font-normal text-sm opacity-50 italic text-white">
-            Do sunt laborum sit commodo laborum deserunt. Esse proident magna
-            culpa velit proident cillum. Fugiat officia nostrud cillum elit
-            consequat velit amet anim. Quis qui ut laborum anim magna eu eiusmod
-            do irure eu.
+            {todo.details}
           </p>
         {/if}
       {/if}
     </div>
 
-    <div class="w-10 flex justify-center relative">
+    <div class="relative w-20 flex justify-center items-center">
+
       <a
         href="/"
-        on:click|preventDefault={remove(todo)}
-        class="w-full flex justify-center">
-        <img src={verticalDots} alt="Remove todo" class="h-6" />
+        on:click|preventDefault={complete(todo)}
+        class="{todo.completed ? 'opacity-100' : 'opacity-25'} hover:opacity-100
+        transition-500 will-change-opacity">
+        <img src={completeTodoImage} alt="Pin todo" class="h-4 mx-2" />
+      </a>
+      <a
+        href="/"
+        class="opacity-25 hover:opacity-100 transition-500 will-change-opacity"
+        on:click|preventDefault={remove(todo)}>
+        <img src={deleteTodoImage} alt="Delete todo" class="h-4 mx-2" />
       </a>
 
-      <!-- <a href="/" class="w-full flex justify-center">
-        <img src={verticalDots} alt="Show menu" class="h-6" />
-      </a> -->
+    </div>
 
-    </div>
-    <div class="absolute flex flex-row right-0 hidden" transition:fade>
-      <img src={pinTodoImage} alt="Pin todo" class="mx-2" />
-      <img src={archiveTodoImage} alt="Archive todo" class="mx-2" />
-      <img src={deleteTodoImage} alt="Delete todo" class="mx-2" />
-    </div>
   </div>
 {/each}

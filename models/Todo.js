@@ -9,19 +9,12 @@ const TodoSchema = new Schema({
   details: {
     type: String
   },
-  clipped: {
-    type: Boolean
-  },
-  archived: {
+  completed: {
     type: Boolean
   },
   prioity: {
     type: String,
     enum: ['high', 'medium', 'low']
-  },
-  date: {
-    type: Date,
-    default: Date.now
   }
 });
 

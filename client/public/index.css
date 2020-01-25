@@ -7935,6 +7935,378 @@ body {
   color: #702459;
 }
 
+.visited\:text-transparent:visited {
+  color: transparent;
+}
+
+.visited\:text-black:visited {
+  color: #000;
+}
+
+.visited\:text-white:visited {
+  color: #fff;
+}
+
+.visited\:text-gray-100:visited {
+  color: #f7fafc;
+}
+
+.visited\:text-gray-200:visited {
+  color: #edf2f7;
+}
+
+.visited\:text-gray-300:visited {
+  color: #e2e8f0;
+}
+
+.visited\:text-gray-400:visited {
+  color: #cbd5e0;
+}
+
+.visited\:text-gray-500:visited {
+  color: #a0aec0;
+}
+
+.visited\:text-gray-600:visited {
+  color: #718096;
+}
+
+.visited\:text-gray-700:visited {
+  color: #4a5568;
+}
+
+.visited\:text-gray-800:visited {
+  color: #2d3748;
+}
+
+.visited\:text-gray-900:visited {
+  color: #1a202c;
+}
+
+.visited\:text-red-100:visited {
+  color: #fff5f5;
+}
+
+.visited\:text-red-200:visited {
+  color: #fed7d7;
+}
+
+.visited\:text-red-300:visited {
+  color: #feb2b2;
+}
+
+.visited\:text-red-400:visited {
+  color: #fc8181;
+}
+
+.visited\:text-red-500:visited {
+  color: #f56565;
+}
+
+.visited\:text-red-600:visited {
+  color: #e53e3e;
+}
+
+.visited\:text-red-700:visited {
+  color: #c53030;
+}
+
+.visited\:text-red-800:visited {
+  color: #9b2c2c;
+}
+
+.visited\:text-red-900:visited {
+  color: #742a2a;
+}
+
+.visited\:text-orange-100:visited {
+  color: #fffaf0;
+}
+
+.visited\:text-orange-200:visited {
+  color: #feebc8;
+}
+
+.visited\:text-orange-300:visited {
+  color: #fbd38d;
+}
+
+.visited\:text-orange-400:visited {
+  color: #f6ad55;
+}
+
+.visited\:text-orange-500:visited {
+  color: #ed8936;
+}
+
+.visited\:text-orange-600:visited {
+  color: #dd6b20;
+}
+
+.visited\:text-orange-700:visited {
+  color: #c05621;
+}
+
+.visited\:text-orange-800:visited {
+  color: #9c4221;
+}
+
+.visited\:text-orange-900:visited {
+  color: #7b341e;
+}
+
+.visited\:text-yellow-100:visited {
+  color: #fffff0;
+}
+
+.visited\:text-yellow-200:visited {
+  color: #fefcbf;
+}
+
+.visited\:text-yellow-300:visited {
+  color: #faf089;
+}
+
+.visited\:text-yellow-400:visited {
+  color: #f6e05e;
+}
+
+.visited\:text-yellow-500:visited {
+  color: #ecc94b;
+}
+
+.visited\:text-yellow-600:visited {
+  color: #d69e2e;
+}
+
+.visited\:text-yellow-700:visited {
+  color: #b7791f;
+}
+
+.visited\:text-yellow-800:visited {
+  color: #975a16;
+}
+
+.visited\:text-yellow-900:visited {
+  color: #744210;
+}
+
+.visited\:text-green-100:visited {
+  color: #f0fff4;
+}
+
+.visited\:text-green-200:visited {
+  color: #c6f6d5;
+}
+
+.visited\:text-green-300:visited {
+  color: #9ae6b4;
+}
+
+.visited\:text-green-400:visited {
+  color: #68d391;
+}
+
+.visited\:text-green-500:visited {
+  color: #48bb78;
+}
+
+.visited\:text-green-600:visited {
+  color: #38a169;
+}
+
+.visited\:text-green-700:visited {
+  color: #2f855a;
+}
+
+.visited\:text-green-800:visited {
+  color: #276749;
+}
+
+.visited\:text-green-900:visited {
+  color: #22543d;
+}
+
+.visited\:text-teal-100:visited {
+  color: #e6fffa;
+}
+
+.visited\:text-teal-200:visited {
+  color: #b2f5ea;
+}
+
+.visited\:text-teal-300:visited {
+  color: #81e6d9;
+}
+
+.visited\:text-teal-400:visited {
+  color: #4fd1c5;
+}
+
+.visited\:text-teal-500:visited {
+  color: #38b2ac;
+}
+
+.visited\:text-teal-600:visited {
+  color: #319795;
+}
+
+.visited\:text-teal-700:visited {
+  color: #2c7a7b;
+}
+
+.visited\:text-teal-800:visited {
+  color: #285e61;
+}
+
+.visited\:text-teal-900:visited {
+  color: #234e52;
+}
+
+.visited\:text-blue-100:visited {
+  color: #ebf8ff;
+}
+
+.visited\:text-blue-200:visited {
+  color: #bee3f8;
+}
+
+.visited\:text-blue-300:visited {
+  color: #90cdf4;
+}
+
+.visited\:text-blue-400:visited {
+  color: #63b3ed;
+}
+
+.visited\:text-blue-500:visited {
+  color: #4299e1;
+}
+
+.visited\:text-blue-600:visited {
+  color: #3182ce;
+}
+
+.visited\:text-blue-700:visited {
+  color: #2b6cb0;
+}
+
+.visited\:text-blue-800:visited {
+  color: #2c5282;
+}
+
+.visited\:text-blue-900:visited {
+  color: #2a4365;
+}
+
+.visited\:text-indigo-100:visited {
+  color: #ebf4ff;
+}
+
+.visited\:text-indigo-200:visited {
+  color: #c3dafe;
+}
+
+.visited\:text-indigo-300:visited {
+  color: #a3bffa;
+}
+
+.visited\:text-indigo-400:visited {
+  color: #7f9cf5;
+}
+
+.visited\:text-indigo-500:visited {
+  color: #667eea;
+}
+
+.visited\:text-indigo-600:visited {
+  color: #5a67d8;
+}
+
+.visited\:text-indigo-700:visited {
+  color: #4c51bf;
+}
+
+.visited\:text-indigo-800:visited {
+  color: #434190;
+}
+
+.visited\:text-indigo-900:visited {
+  color: #3c366b;
+}
+
+.visited\:text-purple-100:visited {
+  color: #faf5ff;
+}
+
+.visited\:text-purple-200:visited {
+  color: #e9d8fd;
+}
+
+.visited\:text-purple-300:visited {
+  color: #d6bcfa;
+}
+
+.visited\:text-purple-400:visited {
+  color: #b794f4;
+}
+
+.visited\:text-purple-500:visited {
+  color: #9f7aea;
+}
+
+.visited\:text-purple-600:visited {
+  color: #805ad5;
+}
+
+.visited\:text-purple-700:visited {
+  color: #6b46c1;
+}
+
+.visited\:text-purple-800:visited {
+  color: #553c9a;
+}
+
+.visited\:text-purple-900:visited {
+  color: #44337a;
+}
+
+.visited\:text-pink-100:visited {
+  color: #fff5f7;
+}
+
+.visited\:text-pink-200:visited {
+  color: #fed7e2;
+}
+
+.visited\:text-pink-300:visited {
+  color: #fbb6ce;
+}
+
+.visited\:text-pink-400:visited {
+  color: #f687b3;
+}
+
+.visited\:text-pink-500:visited {
+  color: #ed64a6;
+}
+
+.visited\:text-pink-600:visited {
+  color: #d53f8c;
+}
+
+.visited\:text-pink-700:visited {
+  color: #b83280;
+}
+
+.visited\:text-pink-800:visited {
+  color: #97266d;
+}
+
+.visited\:text-pink-900:visited {
+  color: #702459;
+}
+
 .text-xs {
   font-size: 0.75rem;
 }
@@ -15802,6 +16174,378 @@ body {
   }
 
   .sm\:focus\:text-pink-900:focus {
+    color: #702459;
+  }
+
+  .sm\:visited\:text-transparent:visited {
+    color: transparent;
+  }
+
+  .sm\:visited\:text-black:visited {
+    color: #000;
+  }
+
+  .sm\:visited\:text-white:visited {
+    color: #fff;
+  }
+
+  .sm\:visited\:text-gray-100:visited {
+    color: #f7fafc;
+  }
+
+  .sm\:visited\:text-gray-200:visited {
+    color: #edf2f7;
+  }
+
+  .sm\:visited\:text-gray-300:visited {
+    color: #e2e8f0;
+  }
+
+  .sm\:visited\:text-gray-400:visited {
+    color: #cbd5e0;
+  }
+
+  .sm\:visited\:text-gray-500:visited {
+    color: #a0aec0;
+  }
+
+  .sm\:visited\:text-gray-600:visited {
+    color: #718096;
+  }
+
+  .sm\:visited\:text-gray-700:visited {
+    color: #4a5568;
+  }
+
+  .sm\:visited\:text-gray-800:visited {
+    color: #2d3748;
+  }
+
+  .sm\:visited\:text-gray-900:visited {
+    color: #1a202c;
+  }
+
+  .sm\:visited\:text-red-100:visited {
+    color: #fff5f5;
+  }
+
+  .sm\:visited\:text-red-200:visited {
+    color: #fed7d7;
+  }
+
+  .sm\:visited\:text-red-300:visited {
+    color: #feb2b2;
+  }
+
+  .sm\:visited\:text-red-400:visited {
+    color: #fc8181;
+  }
+
+  .sm\:visited\:text-red-500:visited {
+    color: #f56565;
+  }
+
+  .sm\:visited\:text-red-600:visited {
+    color: #e53e3e;
+  }
+
+  .sm\:visited\:text-red-700:visited {
+    color: #c53030;
+  }
+
+  .sm\:visited\:text-red-800:visited {
+    color: #9b2c2c;
+  }
+
+  .sm\:visited\:text-red-900:visited {
+    color: #742a2a;
+  }
+
+  .sm\:visited\:text-orange-100:visited {
+    color: #fffaf0;
+  }
+
+  .sm\:visited\:text-orange-200:visited {
+    color: #feebc8;
+  }
+
+  .sm\:visited\:text-orange-300:visited {
+    color: #fbd38d;
+  }
+
+  .sm\:visited\:text-orange-400:visited {
+    color: #f6ad55;
+  }
+
+  .sm\:visited\:text-orange-500:visited {
+    color: #ed8936;
+  }
+
+  .sm\:visited\:text-orange-600:visited {
+    color: #dd6b20;
+  }
+
+  .sm\:visited\:text-orange-700:visited {
+    color: #c05621;
+  }
+
+  .sm\:visited\:text-orange-800:visited {
+    color: #9c4221;
+  }
+
+  .sm\:visited\:text-orange-900:visited {
+    color: #7b341e;
+  }
+
+  .sm\:visited\:text-yellow-100:visited {
+    color: #fffff0;
+  }
+
+  .sm\:visited\:text-yellow-200:visited {
+    color: #fefcbf;
+  }
+
+  .sm\:visited\:text-yellow-300:visited {
+    color: #faf089;
+  }
+
+  .sm\:visited\:text-yellow-400:visited {
+    color: #f6e05e;
+  }
+
+  .sm\:visited\:text-yellow-500:visited {
+    color: #ecc94b;
+  }
+
+  .sm\:visited\:text-yellow-600:visited {
+    color: #d69e2e;
+  }
+
+  .sm\:visited\:text-yellow-700:visited {
+    color: #b7791f;
+  }
+
+  .sm\:visited\:text-yellow-800:visited {
+    color: #975a16;
+  }
+
+  .sm\:visited\:text-yellow-900:visited {
+    color: #744210;
+  }
+
+  .sm\:visited\:text-green-100:visited {
+    color: #f0fff4;
+  }
+
+  .sm\:visited\:text-green-200:visited {
+    color: #c6f6d5;
+  }
+
+  .sm\:visited\:text-green-300:visited {
+    color: #9ae6b4;
+  }
+
+  .sm\:visited\:text-green-400:visited {
+    color: #68d391;
+  }
+
+  .sm\:visited\:text-green-500:visited {
+    color: #48bb78;
+  }
+
+  .sm\:visited\:text-green-600:visited {
+    color: #38a169;
+  }
+
+  .sm\:visited\:text-green-700:visited {
+    color: #2f855a;
+  }
+
+  .sm\:visited\:text-green-800:visited {
+    color: #276749;
+  }
+
+  .sm\:visited\:text-green-900:visited {
+    color: #22543d;
+  }
+
+  .sm\:visited\:text-teal-100:visited {
+    color: #e6fffa;
+  }
+
+  .sm\:visited\:text-teal-200:visited {
+    color: #b2f5ea;
+  }
+
+  .sm\:visited\:text-teal-300:visited {
+    color: #81e6d9;
+  }
+
+  .sm\:visited\:text-teal-400:visited {
+    color: #4fd1c5;
+  }
+
+  .sm\:visited\:text-teal-500:visited {
+    color: #38b2ac;
+  }
+
+  .sm\:visited\:text-teal-600:visited {
+    color: #319795;
+  }
+
+  .sm\:visited\:text-teal-700:visited {
+    color: #2c7a7b;
+  }
+
+  .sm\:visited\:text-teal-800:visited {
+    color: #285e61;
+  }
+
+  .sm\:visited\:text-teal-900:visited {
+    color: #234e52;
+  }
+
+  .sm\:visited\:text-blue-100:visited {
+    color: #ebf8ff;
+  }
+
+  .sm\:visited\:text-blue-200:visited {
+    color: #bee3f8;
+  }
+
+  .sm\:visited\:text-blue-300:visited {
+    color: #90cdf4;
+  }
+
+  .sm\:visited\:text-blue-400:visited {
+    color: #63b3ed;
+  }
+
+  .sm\:visited\:text-blue-500:visited {
+    color: #4299e1;
+  }
+
+  .sm\:visited\:text-blue-600:visited {
+    color: #3182ce;
+  }
+
+  .sm\:visited\:text-blue-700:visited {
+    color: #2b6cb0;
+  }
+
+  .sm\:visited\:text-blue-800:visited {
+    color: #2c5282;
+  }
+
+  .sm\:visited\:text-blue-900:visited {
+    color: #2a4365;
+  }
+
+  .sm\:visited\:text-indigo-100:visited {
+    color: #ebf4ff;
+  }
+
+  .sm\:visited\:text-indigo-200:visited {
+    color: #c3dafe;
+  }
+
+  .sm\:visited\:text-indigo-300:visited {
+    color: #a3bffa;
+  }
+
+  .sm\:visited\:text-indigo-400:visited {
+    color: #7f9cf5;
+  }
+
+  .sm\:visited\:text-indigo-500:visited {
+    color: #667eea;
+  }
+
+  .sm\:visited\:text-indigo-600:visited {
+    color: #5a67d8;
+  }
+
+  .sm\:visited\:text-indigo-700:visited {
+    color: #4c51bf;
+  }
+
+  .sm\:visited\:text-indigo-800:visited {
+    color: #434190;
+  }
+
+  .sm\:visited\:text-indigo-900:visited {
+    color: #3c366b;
+  }
+
+  .sm\:visited\:text-purple-100:visited {
+    color: #faf5ff;
+  }
+
+  .sm\:visited\:text-purple-200:visited {
+    color: #e9d8fd;
+  }
+
+  .sm\:visited\:text-purple-300:visited {
+    color: #d6bcfa;
+  }
+
+  .sm\:visited\:text-purple-400:visited {
+    color: #b794f4;
+  }
+
+  .sm\:visited\:text-purple-500:visited {
+    color: #9f7aea;
+  }
+
+  .sm\:visited\:text-purple-600:visited {
+    color: #805ad5;
+  }
+
+  .sm\:visited\:text-purple-700:visited {
+    color: #6b46c1;
+  }
+
+  .sm\:visited\:text-purple-800:visited {
+    color: #553c9a;
+  }
+
+  .sm\:visited\:text-purple-900:visited {
+    color: #44337a;
+  }
+
+  .sm\:visited\:text-pink-100:visited {
+    color: #fff5f7;
+  }
+
+  .sm\:visited\:text-pink-200:visited {
+    color: #fed7e2;
+  }
+
+  .sm\:visited\:text-pink-300:visited {
+    color: #fbb6ce;
+  }
+
+  .sm\:visited\:text-pink-400:visited {
+    color: #f687b3;
+  }
+
+  .sm\:visited\:text-pink-500:visited {
+    color: #ed64a6;
+  }
+
+  .sm\:visited\:text-pink-600:visited {
+    color: #d53f8c;
+  }
+
+  .sm\:visited\:text-pink-700:visited {
+    color: #b83280;
+  }
+
+  .sm\:visited\:text-pink-800:visited {
+    color: #97266d;
+  }
+
+  .sm\:visited\:text-pink-900:visited {
     color: #702459;
   }
 
@@ -23676,6 +24420,378 @@ body {
     color: #702459;
   }
 
+  .md\:visited\:text-transparent:visited {
+    color: transparent;
+  }
+
+  .md\:visited\:text-black:visited {
+    color: #000;
+  }
+
+  .md\:visited\:text-white:visited {
+    color: #fff;
+  }
+
+  .md\:visited\:text-gray-100:visited {
+    color: #f7fafc;
+  }
+
+  .md\:visited\:text-gray-200:visited {
+    color: #edf2f7;
+  }
+
+  .md\:visited\:text-gray-300:visited {
+    color: #e2e8f0;
+  }
+
+  .md\:visited\:text-gray-400:visited {
+    color: #cbd5e0;
+  }
+
+  .md\:visited\:text-gray-500:visited {
+    color: #a0aec0;
+  }
+
+  .md\:visited\:text-gray-600:visited {
+    color: #718096;
+  }
+
+  .md\:visited\:text-gray-700:visited {
+    color: #4a5568;
+  }
+
+  .md\:visited\:text-gray-800:visited {
+    color: #2d3748;
+  }
+
+  .md\:visited\:text-gray-900:visited {
+    color: #1a202c;
+  }
+
+  .md\:visited\:text-red-100:visited {
+    color: #fff5f5;
+  }
+
+  .md\:visited\:text-red-200:visited {
+    color: #fed7d7;
+  }
+
+  .md\:visited\:text-red-300:visited {
+    color: #feb2b2;
+  }
+
+  .md\:visited\:text-red-400:visited {
+    color: #fc8181;
+  }
+
+  .md\:visited\:text-red-500:visited {
+    color: #f56565;
+  }
+
+  .md\:visited\:text-red-600:visited {
+    color: #e53e3e;
+  }
+
+  .md\:visited\:text-red-700:visited {
+    color: #c53030;
+  }
+
+  .md\:visited\:text-red-800:visited {
+    color: #9b2c2c;
+  }
+
+  .md\:visited\:text-red-900:visited {
+    color: #742a2a;
+  }
+
+  .md\:visited\:text-orange-100:visited {
+    color: #fffaf0;
+  }
+
+  .md\:visited\:text-orange-200:visited {
+    color: #feebc8;
+  }
+
+  .md\:visited\:text-orange-300:visited {
+    color: #fbd38d;
+  }
+
+  .md\:visited\:text-orange-400:visited {
+    color: #f6ad55;
+  }
+
+  .md\:visited\:text-orange-500:visited {
+    color: #ed8936;
+  }
+
+  .md\:visited\:text-orange-600:visited {
+    color: #dd6b20;
+  }
+
+  .md\:visited\:text-orange-700:visited {
+    color: #c05621;
+  }
+
+  .md\:visited\:text-orange-800:visited {
+    color: #9c4221;
+  }
+
+  .md\:visited\:text-orange-900:visited {
+    color: #7b341e;
+  }
+
+  .md\:visited\:text-yellow-100:visited {
+    color: #fffff0;
+  }
+
+  .md\:visited\:text-yellow-200:visited {
+    color: #fefcbf;
+  }
+
+  .md\:visited\:text-yellow-300:visited {
+    color: #faf089;
+  }
+
+  .md\:visited\:text-yellow-400:visited {
+    color: #f6e05e;
+  }
+
+  .md\:visited\:text-yellow-500:visited {
+    color: #ecc94b;
+  }
+
+  .md\:visited\:text-yellow-600:visited {
+    color: #d69e2e;
+  }
+
+  .md\:visited\:text-yellow-700:visited {
+    color: #b7791f;
+  }
+
+  .md\:visited\:text-yellow-800:visited {
+    color: #975a16;
+  }
+
+  .md\:visited\:text-yellow-900:visited {
+    color: #744210;
+  }
+
+  .md\:visited\:text-green-100:visited {
+    color: #f0fff4;
+  }
+
+  .md\:visited\:text-green-200:visited {
+    color: #c6f6d5;
+  }
+
+  .md\:visited\:text-green-300:visited {
+    color: #9ae6b4;
+  }
+
+  .md\:visited\:text-green-400:visited {
+    color: #68d391;
+  }
+
+  .md\:visited\:text-green-500:visited {
+    color: #48bb78;
+  }
+
+  .md\:visited\:text-green-600:visited {
+    color: #38a169;
+  }
+
+  .md\:visited\:text-green-700:visited {
+    color: #2f855a;
+  }
+
+  .md\:visited\:text-green-800:visited {
+    color: #276749;
+  }
+
+  .md\:visited\:text-green-900:visited {
+    color: #22543d;
+  }
+
+  .md\:visited\:text-teal-100:visited {
+    color: #e6fffa;
+  }
+
+  .md\:visited\:text-teal-200:visited {
+    color: #b2f5ea;
+  }
+
+  .md\:visited\:text-teal-300:visited {
+    color: #81e6d9;
+  }
+
+  .md\:visited\:text-teal-400:visited {
+    color: #4fd1c5;
+  }
+
+  .md\:visited\:text-teal-500:visited {
+    color: #38b2ac;
+  }
+
+  .md\:visited\:text-teal-600:visited {
+    color: #319795;
+  }
+
+  .md\:visited\:text-teal-700:visited {
+    color: #2c7a7b;
+  }
+
+  .md\:visited\:text-teal-800:visited {
+    color: #285e61;
+  }
+
+  .md\:visited\:text-teal-900:visited {
+    color: #234e52;
+  }
+
+  .md\:visited\:text-blue-100:visited {
+    color: #ebf8ff;
+  }
+
+  .md\:visited\:text-blue-200:visited {
+    color: #bee3f8;
+  }
+
+  .md\:visited\:text-blue-300:visited {
+    color: #90cdf4;
+  }
+
+  .md\:visited\:text-blue-400:visited {
+    color: #63b3ed;
+  }
+
+  .md\:visited\:text-blue-500:visited {
+    color: #4299e1;
+  }
+
+  .md\:visited\:text-blue-600:visited {
+    color: #3182ce;
+  }
+
+  .md\:visited\:text-blue-700:visited {
+    color: #2b6cb0;
+  }
+
+  .md\:visited\:text-blue-800:visited {
+    color: #2c5282;
+  }
+
+  .md\:visited\:text-blue-900:visited {
+    color: #2a4365;
+  }
+
+  .md\:visited\:text-indigo-100:visited {
+    color: #ebf4ff;
+  }
+
+  .md\:visited\:text-indigo-200:visited {
+    color: #c3dafe;
+  }
+
+  .md\:visited\:text-indigo-300:visited {
+    color: #a3bffa;
+  }
+
+  .md\:visited\:text-indigo-400:visited {
+    color: #7f9cf5;
+  }
+
+  .md\:visited\:text-indigo-500:visited {
+    color: #667eea;
+  }
+
+  .md\:visited\:text-indigo-600:visited {
+    color: #5a67d8;
+  }
+
+  .md\:visited\:text-indigo-700:visited {
+    color: #4c51bf;
+  }
+
+  .md\:visited\:text-indigo-800:visited {
+    color: #434190;
+  }
+
+  .md\:visited\:text-indigo-900:visited {
+    color: #3c366b;
+  }
+
+  .md\:visited\:text-purple-100:visited {
+    color: #faf5ff;
+  }
+
+  .md\:visited\:text-purple-200:visited {
+    color: #e9d8fd;
+  }
+
+  .md\:visited\:text-purple-300:visited {
+    color: #d6bcfa;
+  }
+
+  .md\:visited\:text-purple-400:visited {
+    color: #b794f4;
+  }
+
+  .md\:visited\:text-purple-500:visited {
+    color: #9f7aea;
+  }
+
+  .md\:visited\:text-purple-600:visited {
+    color: #805ad5;
+  }
+
+  .md\:visited\:text-purple-700:visited {
+    color: #6b46c1;
+  }
+
+  .md\:visited\:text-purple-800:visited {
+    color: #553c9a;
+  }
+
+  .md\:visited\:text-purple-900:visited {
+    color: #44337a;
+  }
+
+  .md\:visited\:text-pink-100:visited {
+    color: #fff5f7;
+  }
+
+  .md\:visited\:text-pink-200:visited {
+    color: #fed7e2;
+  }
+
+  .md\:visited\:text-pink-300:visited {
+    color: #fbb6ce;
+  }
+
+  .md\:visited\:text-pink-400:visited {
+    color: #f687b3;
+  }
+
+  .md\:visited\:text-pink-500:visited {
+    color: #ed64a6;
+  }
+
+  .md\:visited\:text-pink-600:visited {
+    color: #d53f8c;
+  }
+
+  .md\:visited\:text-pink-700:visited {
+    color: #b83280;
+  }
+
+  .md\:visited\:text-pink-800:visited {
+    color: #97266d;
+  }
+
+  .md\:visited\:text-pink-900:visited {
+    color: #702459;
+  }
+
   .md\:text-xs {
     font-size: 0.75rem;
   }
@@ -31547,6 +32663,378 @@ body {
     color: #702459;
   }
 
+  .lg\:visited\:text-transparent:visited {
+    color: transparent;
+  }
+
+  .lg\:visited\:text-black:visited {
+    color: #000;
+  }
+
+  .lg\:visited\:text-white:visited {
+    color: #fff;
+  }
+
+  .lg\:visited\:text-gray-100:visited {
+    color: #f7fafc;
+  }
+
+  .lg\:visited\:text-gray-200:visited {
+    color: #edf2f7;
+  }
+
+  .lg\:visited\:text-gray-300:visited {
+    color: #e2e8f0;
+  }
+
+  .lg\:visited\:text-gray-400:visited {
+    color: #cbd5e0;
+  }
+
+  .lg\:visited\:text-gray-500:visited {
+    color: #a0aec0;
+  }
+
+  .lg\:visited\:text-gray-600:visited {
+    color: #718096;
+  }
+
+  .lg\:visited\:text-gray-700:visited {
+    color: #4a5568;
+  }
+
+  .lg\:visited\:text-gray-800:visited {
+    color: #2d3748;
+  }
+
+  .lg\:visited\:text-gray-900:visited {
+    color: #1a202c;
+  }
+
+  .lg\:visited\:text-red-100:visited {
+    color: #fff5f5;
+  }
+
+  .lg\:visited\:text-red-200:visited {
+    color: #fed7d7;
+  }
+
+  .lg\:visited\:text-red-300:visited {
+    color: #feb2b2;
+  }
+
+  .lg\:visited\:text-red-400:visited {
+    color: #fc8181;
+  }
+
+  .lg\:visited\:text-red-500:visited {
+    color: #f56565;
+  }
+
+  .lg\:visited\:text-red-600:visited {
+    color: #e53e3e;
+  }
+
+  .lg\:visited\:text-red-700:visited {
+    color: #c53030;
+  }
+
+  .lg\:visited\:text-red-800:visited {
+    color: #9b2c2c;
+  }
+
+  .lg\:visited\:text-red-900:visited {
+    color: #742a2a;
+  }
+
+  .lg\:visited\:text-orange-100:visited {
+    color: #fffaf0;
+  }
+
+  .lg\:visited\:text-orange-200:visited {
+    color: #feebc8;
+  }
+
+  .lg\:visited\:text-orange-300:visited {
+    color: #fbd38d;
+  }
+
+  .lg\:visited\:text-orange-400:visited {
+    color: #f6ad55;
+  }
+
+  .lg\:visited\:text-orange-500:visited {
+    color: #ed8936;
+  }
+
+  .lg\:visited\:text-orange-600:visited {
+    color: #dd6b20;
+  }
+
+  .lg\:visited\:text-orange-700:visited {
+    color: #c05621;
+  }
+
+  .lg\:visited\:text-orange-800:visited {
+    color: #9c4221;
+  }
+
+  .lg\:visited\:text-orange-900:visited {
+    color: #7b341e;
+  }
+
+  .lg\:visited\:text-yellow-100:visited {
+    color: #fffff0;
+  }
+
+  .lg\:visited\:text-yellow-200:visited {
+    color: #fefcbf;
+  }
+
+  .lg\:visited\:text-yellow-300:visited {
+    color: #faf089;
+  }
+
+  .lg\:visited\:text-yellow-400:visited {
+    color: #f6e05e;
+  }
+
+  .lg\:visited\:text-yellow-500:visited {
+    color: #ecc94b;
+  }
+
+  .lg\:visited\:text-yellow-600:visited {
+    color: #d69e2e;
+  }
+
+  .lg\:visited\:text-yellow-700:visited {
+    color: #b7791f;
+  }
+
+  .lg\:visited\:text-yellow-800:visited {
+    color: #975a16;
+  }
+
+  .lg\:visited\:text-yellow-900:visited {
+    color: #744210;
+  }
+
+  .lg\:visited\:text-green-100:visited {
+    color: #f0fff4;
+  }
+
+  .lg\:visited\:text-green-200:visited {
+    color: #c6f6d5;
+  }
+
+  .lg\:visited\:text-green-300:visited {
+    color: #9ae6b4;
+  }
+
+  .lg\:visited\:text-green-400:visited {
+    color: #68d391;
+  }
+
+  .lg\:visited\:text-green-500:visited {
+    color: #48bb78;
+  }
+
+  .lg\:visited\:text-green-600:visited {
+    color: #38a169;
+  }
+
+  .lg\:visited\:text-green-700:visited {
+    color: #2f855a;
+  }
+
+  .lg\:visited\:text-green-800:visited {
+    color: #276749;
+  }
+
+  .lg\:visited\:text-green-900:visited {
+    color: #22543d;
+  }
+
+  .lg\:visited\:text-teal-100:visited {
+    color: #e6fffa;
+  }
+
+  .lg\:visited\:text-teal-200:visited {
+    color: #b2f5ea;
+  }
+
+  .lg\:visited\:text-teal-300:visited {
+    color: #81e6d9;
+  }
+
+  .lg\:visited\:text-teal-400:visited {
+    color: #4fd1c5;
+  }
+
+  .lg\:visited\:text-teal-500:visited {
+    color: #38b2ac;
+  }
+
+  .lg\:visited\:text-teal-600:visited {
+    color: #319795;
+  }
+
+  .lg\:visited\:text-teal-700:visited {
+    color: #2c7a7b;
+  }
+
+  .lg\:visited\:text-teal-800:visited {
+    color: #285e61;
+  }
+
+  .lg\:visited\:text-teal-900:visited {
+    color: #234e52;
+  }
+
+  .lg\:visited\:text-blue-100:visited {
+    color: #ebf8ff;
+  }
+
+  .lg\:visited\:text-blue-200:visited {
+    color: #bee3f8;
+  }
+
+  .lg\:visited\:text-blue-300:visited {
+    color: #90cdf4;
+  }
+
+  .lg\:visited\:text-blue-400:visited {
+    color: #63b3ed;
+  }
+
+  .lg\:visited\:text-blue-500:visited {
+    color: #4299e1;
+  }
+
+  .lg\:visited\:text-blue-600:visited {
+    color: #3182ce;
+  }
+
+  .lg\:visited\:text-blue-700:visited {
+    color: #2b6cb0;
+  }
+
+  .lg\:visited\:text-blue-800:visited {
+    color: #2c5282;
+  }
+
+  .lg\:visited\:text-blue-900:visited {
+    color: #2a4365;
+  }
+
+  .lg\:visited\:text-indigo-100:visited {
+    color: #ebf4ff;
+  }
+
+  .lg\:visited\:text-indigo-200:visited {
+    color: #c3dafe;
+  }
+
+  .lg\:visited\:text-indigo-300:visited {
+    color: #a3bffa;
+  }
+
+  .lg\:visited\:text-indigo-400:visited {
+    color: #7f9cf5;
+  }
+
+  .lg\:visited\:text-indigo-500:visited {
+    color: #667eea;
+  }
+
+  .lg\:visited\:text-indigo-600:visited {
+    color: #5a67d8;
+  }
+
+  .lg\:visited\:text-indigo-700:visited {
+    color: #4c51bf;
+  }
+
+  .lg\:visited\:text-indigo-800:visited {
+    color: #434190;
+  }
+
+  .lg\:visited\:text-indigo-900:visited {
+    color: #3c366b;
+  }
+
+  .lg\:visited\:text-purple-100:visited {
+    color: #faf5ff;
+  }
+
+  .lg\:visited\:text-purple-200:visited {
+    color: #e9d8fd;
+  }
+
+  .lg\:visited\:text-purple-300:visited {
+    color: #d6bcfa;
+  }
+
+  .lg\:visited\:text-purple-400:visited {
+    color: #b794f4;
+  }
+
+  .lg\:visited\:text-purple-500:visited {
+    color: #9f7aea;
+  }
+
+  .lg\:visited\:text-purple-600:visited {
+    color: #805ad5;
+  }
+
+  .lg\:visited\:text-purple-700:visited {
+    color: #6b46c1;
+  }
+
+  .lg\:visited\:text-purple-800:visited {
+    color: #553c9a;
+  }
+
+  .lg\:visited\:text-purple-900:visited {
+    color: #44337a;
+  }
+
+  .lg\:visited\:text-pink-100:visited {
+    color: #fff5f7;
+  }
+
+  .lg\:visited\:text-pink-200:visited {
+    color: #fed7e2;
+  }
+
+  .lg\:visited\:text-pink-300:visited {
+    color: #fbb6ce;
+  }
+
+  .lg\:visited\:text-pink-400:visited {
+    color: #f687b3;
+  }
+
+  .lg\:visited\:text-pink-500:visited {
+    color: #ed64a6;
+  }
+
+  .lg\:visited\:text-pink-600:visited {
+    color: #d53f8c;
+  }
+
+  .lg\:visited\:text-pink-700:visited {
+    color: #b83280;
+  }
+
+  .lg\:visited\:text-pink-800:visited {
+    color: #97266d;
+  }
+
+  .lg\:visited\:text-pink-900:visited {
+    color: #702459;
+  }
+
   .lg\:text-xs {
     font-size: 0.75rem;
   }
@@ -39415,6 +40903,378 @@ body {
   }
 
   .xl\:focus\:text-pink-900:focus {
+    color: #702459;
+  }
+
+  .xl\:visited\:text-transparent:visited {
+    color: transparent;
+  }
+
+  .xl\:visited\:text-black:visited {
+    color: #000;
+  }
+
+  .xl\:visited\:text-white:visited {
+    color: #fff;
+  }
+
+  .xl\:visited\:text-gray-100:visited {
+    color: #f7fafc;
+  }
+
+  .xl\:visited\:text-gray-200:visited {
+    color: #edf2f7;
+  }
+
+  .xl\:visited\:text-gray-300:visited {
+    color: #e2e8f0;
+  }
+
+  .xl\:visited\:text-gray-400:visited {
+    color: #cbd5e0;
+  }
+
+  .xl\:visited\:text-gray-500:visited {
+    color: #a0aec0;
+  }
+
+  .xl\:visited\:text-gray-600:visited {
+    color: #718096;
+  }
+
+  .xl\:visited\:text-gray-700:visited {
+    color: #4a5568;
+  }
+
+  .xl\:visited\:text-gray-800:visited {
+    color: #2d3748;
+  }
+
+  .xl\:visited\:text-gray-900:visited {
+    color: #1a202c;
+  }
+
+  .xl\:visited\:text-red-100:visited {
+    color: #fff5f5;
+  }
+
+  .xl\:visited\:text-red-200:visited {
+    color: #fed7d7;
+  }
+
+  .xl\:visited\:text-red-300:visited {
+    color: #feb2b2;
+  }
+
+  .xl\:visited\:text-red-400:visited {
+    color: #fc8181;
+  }
+
+  .xl\:visited\:text-red-500:visited {
+    color: #f56565;
+  }
+
+  .xl\:visited\:text-red-600:visited {
+    color: #e53e3e;
+  }
+
+  .xl\:visited\:text-red-700:visited {
+    color: #c53030;
+  }
+
+  .xl\:visited\:text-red-800:visited {
+    color: #9b2c2c;
+  }
+
+  .xl\:visited\:text-red-900:visited {
+    color: #742a2a;
+  }
+
+  .xl\:visited\:text-orange-100:visited {
+    color: #fffaf0;
+  }
+
+  .xl\:visited\:text-orange-200:visited {
+    color: #feebc8;
+  }
+
+  .xl\:visited\:text-orange-300:visited {
+    color: #fbd38d;
+  }
+
+  .xl\:visited\:text-orange-400:visited {
+    color: #f6ad55;
+  }
+
+  .xl\:visited\:text-orange-500:visited {
+    color: #ed8936;
+  }
+
+  .xl\:visited\:text-orange-600:visited {
+    color: #dd6b20;
+  }
+
+  .xl\:visited\:text-orange-700:visited {
+    color: #c05621;
+  }
+
+  .xl\:visited\:text-orange-800:visited {
+    color: #9c4221;
+  }
+
+  .xl\:visited\:text-orange-900:visited {
+    color: #7b341e;
+  }
+
+  .xl\:visited\:text-yellow-100:visited {
+    color: #fffff0;
+  }
+
+  .xl\:visited\:text-yellow-200:visited {
+    color: #fefcbf;
+  }
+
+  .xl\:visited\:text-yellow-300:visited {
+    color: #faf089;
+  }
+
+  .xl\:visited\:text-yellow-400:visited {
+    color: #f6e05e;
+  }
+
+  .xl\:visited\:text-yellow-500:visited {
+    color: #ecc94b;
+  }
+
+  .xl\:visited\:text-yellow-600:visited {
+    color: #d69e2e;
+  }
+
+  .xl\:visited\:text-yellow-700:visited {
+    color: #b7791f;
+  }
+
+  .xl\:visited\:text-yellow-800:visited {
+    color: #975a16;
+  }
+
+  .xl\:visited\:text-yellow-900:visited {
+    color: #744210;
+  }
+
+  .xl\:visited\:text-green-100:visited {
+    color: #f0fff4;
+  }
+
+  .xl\:visited\:text-green-200:visited {
+    color: #c6f6d5;
+  }
+
+  .xl\:visited\:text-green-300:visited {
+    color: #9ae6b4;
+  }
+
+  .xl\:visited\:text-green-400:visited {
+    color: #68d391;
+  }
+
+  .xl\:visited\:text-green-500:visited {
+    color: #48bb78;
+  }
+
+  .xl\:visited\:text-green-600:visited {
+    color: #38a169;
+  }
+
+  .xl\:visited\:text-green-700:visited {
+    color: #2f855a;
+  }
+
+  .xl\:visited\:text-green-800:visited {
+    color: #276749;
+  }
+
+  .xl\:visited\:text-green-900:visited {
+    color: #22543d;
+  }
+
+  .xl\:visited\:text-teal-100:visited {
+    color: #e6fffa;
+  }
+
+  .xl\:visited\:text-teal-200:visited {
+    color: #b2f5ea;
+  }
+
+  .xl\:visited\:text-teal-300:visited {
+    color: #81e6d9;
+  }
+
+  .xl\:visited\:text-teal-400:visited {
+    color: #4fd1c5;
+  }
+
+  .xl\:visited\:text-teal-500:visited {
+    color: #38b2ac;
+  }
+
+  .xl\:visited\:text-teal-600:visited {
+    color: #319795;
+  }
+
+  .xl\:visited\:text-teal-700:visited {
+    color: #2c7a7b;
+  }
+
+  .xl\:visited\:text-teal-800:visited {
+    color: #285e61;
+  }
+
+  .xl\:visited\:text-teal-900:visited {
+    color: #234e52;
+  }
+
+  .xl\:visited\:text-blue-100:visited {
+    color: #ebf8ff;
+  }
+
+  .xl\:visited\:text-blue-200:visited {
+    color: #bee3f8;
+  }
+
+  .xl\:visited\:text-blue-300:visited {
+    color: #90cdf4;
+  }
+
+  .xl\:visited\:text-blue-400:visited {
+    color: #63b3ed;
+  }
+
+  .xl\:visited\:text-blue-500:visited {
+    color: #4299e1;
+  }
+
+  .xl\:visited\:text-blue-600:visited {
+    color: #3182ce;
+  }
+
+  .xl\:visited\:text-blue-700:visited {
+    color: #2b6cb0;
+  }
+
+  .xl\:visited\:text-blue-800:visited {
+    color: #2c5282;
+  }
+
+  .xl\:visited\:text-blue-900:visited {
+    color: #2a4365;
+  }
+
+  .xl\:visited\:text-indigo-100:visited {
+    color: #ebf4ff;
+  }
+
+  .xl\:visited\:text-indigo-200:visited {
+    color: #c3dafe;
+  }
+
+  .xl\:visited\:text-indigo-300:visited {
+    color: #a3bffa;
+  }
+
+  .xl\:visited\:text-indigo-400:visited {
+    color: #7f9cf5;
+  }
+
+  .xl\:visited\:text-indigo-500:visited {
+    color: #667eea;
+  }
+
+  .xl\:visited\:text-indigo-600:visited {
+    color: #5a67d8;
+  }
+
+  .xl\:visited\:text-indigo-700:visited {
+    color: #4c51bf;
+  }
+
+  .xl\:visited\:text-indigo-800:visited {
+    color: #434190;
+  }
+
+  .xl\:visited\:text-indigo-900:visited {
+    color: #3c366b;
+  }
+
+  .xl\:visited\:text-purple-100:visited {
+    color: #faf5ff;
+  }
+
+  .xl\:visited\:text-purple-200:visited {
+    color: #e9d8fd;
+  }
+
+  .xl\:visited\:text-purple-300:visited {
+    color: #d6bcfa;
+  }
+
+  .xl\:visited\:text-purple-400:visited {
+    color: #b794f4;
+  }
+
+  .xl\:visited\:text-purple-500:visited {
+    color: #9f7aea;
+  }
+
+  .xl\:visited\:text-purple-600:visited {
+    color: #805ad5;
+  }
+
+  .xl\:visited\:text-purple-700:visited {
+    color: #6b46c1;
+  }
+
+  .xl\:visited\:text-purple-800:visited {
+    color: #553c9a;
+  }
+
+  .xl\:visited\:text-purple-900:visited {
+    color: #44337a;
+  }
+
+  .xl\:visited\:text-pink-100:visited {
+    color: #fff5f7;
+  }
+
+  .xl\:visited\:text-pink-200:visited {
+    color: #fed7e2;
+  }
+
+  .xl\:visited\:text-pink-300:visited {
+    color: #fbb6ce;
+  }
+
+  .xl\:visited\:text-pink-400:visited {
+    color: #f687b3;
+  }
+
+  .xl\:visited\:text-pink-500:visited {
+    color: #ed64a6;
+  }
+
+  .xl\:visited\:text-pink-600:visited {
+    color: #d53f8c;
+  }
+
+  .xl\:visited\:text-pink-700:visited {
+    color: #b83280;
+  }
+
+  .xl\:visited\:text-pink-800:visited {
+    color: #97266d;
+  }
+
+  .xl\:visited\:text-pink-900:visited {
     color: #702459;
   }
 
